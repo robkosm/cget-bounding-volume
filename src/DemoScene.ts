@@ -17,7 +17,7 @@ export default class DemoScene extends THREE.Scene {
         targetMtl.preload();
 
         this.bunny = await this.createBunny(targetMtl);
-        this.bunny.scale.set(10, 10, 10);
+        // this.bunny.scale.set(10, 10, 10);
         this.add(this.bunny);
 
         const bbox = new THREE.Box3().setFromObject(this.bunny);
