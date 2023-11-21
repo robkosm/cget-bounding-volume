@@ -20,9 +20,9 @@ export default class DemoScene extends THREE.Scene {
         // this.bunny.scale.set(10, 10, 10);
         this.add(this.bunny);
 
-        const bbox = new THREE.Box3().setFromObject(this.bunny);
-        const helper = new THREE.Box3Helper(bbox, 0xffff00);
-        this.add(helper);
+        // const bbox = new THREE.Box3().setFromObject(this.bunny);
+        // const helper = new THREE.Box3Helper(bbox, 0xffff00);
+        // this.add(helper);
 
         const light = new THREE.DirectionalLight(0xffffff, 1);
         light.position.set(0, 4, 2);
