@@ -13,8 +13,8 @@ scene.add(axesHelper);
 const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
-    0.1,
-    1000
+    0.01,
+    10
 );
 
 const renderer = new THREE.WebGLRenderer();
@@ -23,7 +23,11 @@ document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-camera.position.z = 1;
+camera.position.z = .2;
+camera.position.y = .2;
+
+controls.target = new THREE.Vector3(0, .1, 0);
+
 controls.update();
 
 function sceneLoaded() {
