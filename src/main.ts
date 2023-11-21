@@ -7,8 +7,8 @@ import DOP14 from "./DOP14";
 const scene = new DemoScene();
 scene.initialize(sceneLoaded);
 
-const axesHelper = new THREE.AxesHelper( 5 );
-scene.add( axesHelper );
+const axesHelper = new THREE.AxesHelper(5);
+scene.add(axesHelper);
 
 const camera = new THREE.PerspectiveCamera(
     75,
@@ -29,9 +29,12 @@ controls.update();
 function sceneLoaded() {
     const testDOP14 = new DOP14();
     testDOP14.fromVertexBuffers(scene.getVertices());
-    const planes = testDOP14.planes();
 
-    planes.forEach((p) => {
+    // testDOP14.planes().forEach((p) => {
+    //     scene.add(p);
+    // });
+
+    testDOP14.edges().forEach((p) => {
         scene.add(p);
     });
 
