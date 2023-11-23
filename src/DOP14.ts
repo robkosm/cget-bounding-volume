@@ -115,6 +115,11 @@ export default class DOP14 {
     }
 
     union(dop14: DOP14): this {
-        throw new Error("not Implemented");
+        for (let i = 0; i < this.min.length; i++) {
+            this.min[i] = Math.min(this.min[i], dop14.min[i]);
+            this.max[i] = Math.max(this.max[i], dop14.max[i]);
+        }
+
+        return this;
     }
 }
