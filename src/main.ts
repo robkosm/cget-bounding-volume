@@ -2,7 +2,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import DemoScene from "./DemoScene";
-import DOP14 from "./DOP14";
 
 const scene = new DemoScene();
 scene.initialize(sceneLoaded);
@@ -31,17 +30,6 @@ controls.target = new THREE.Vector3(0, .1, 0);
 controls.update();
 
 function sceneLoaded() {
-    const testDOP14 = new DOP14();
-    testDOP14.fromVertexBuffers(scene.getVertices());
-
-    // testDOP14.planes().forEach((p) => {
-    //     scene.add(p);
-    // });
-
-    testDOP14.edges().forEach((p) => {
-        scene.add(p);
-    });
-
     animate();
 }
 

@@ -3,6 +3,9 @@ import * as THREE from "three";
 import { OBJLoader } from "three/examples/jsm/Addons.js";
 import { MTLLoader } from "three/examples/jsm/Addons.js";
 
+import DOPHelper from "./DOPHelper";
+import DOP14 from "./DOP14";
+
 export default class DemoScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
     private readonly mtlLoader = new MTLLoader();
@@ -19,6 +22,12 @@ export default class DemoScene extends THREE.Scene {
         this.bunny = await this.createBunny(targetMtl);
         // this.bunny.scale.set(10, 10, 10);
         this.add(this.bunny);
+
+        const bunnyDOP14 = new DOP14()
+        const bunnyBuffer = this.getVertices()
+        bunnyDOP14.fromVertexBuffers(bunnyBuffer)
+        const bunnyHelper = new DOPHelper(bunnyDOP14)
+        this.add(bunnyHelper)
 
         // const bbox = new THREE.Box3().setFromObject(this.bunny);
         // const helper = new THREE.Box3Helper(bbox, 0xffff00);
