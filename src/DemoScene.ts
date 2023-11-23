@@ -25,7 +25,7 @@ export default class DemoScene extends THREE.Scene {
 
         const bunnyDOP14 = new DOP14()
         const bunnyBuffer = this.getVertices()
-        bunnyDOP14.fromVertexBuffers(bunnyBuffer)
+        bunnyDOP14.setFromVertexBuffers(bunnyBuffer)
         const bunnyHelper = new DOPHelper(bunnyDOP14)
         this.add(bunnyHelper)
 

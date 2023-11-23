@@ -1,6 +1,8 @@
 import * as THREE from "three";
+import { INFINITY } from "three/examples/jsm/nodes/Nodes.js";
 
 export default class DOP14 {
+    isDOP14: boolean = true;
     min: number[];
     max: number[];
     normals = [
@@ -13,14 +15,69 @@ export default class DOP14 {
         new THREE.Vector3(1, -1, -1),
     ];
 
-    constructor() {
-        this.min = Array(7).fill(0);
-        this.max = Array(7).fill(0);
+    constructor(
+        _min: number[] = Array(7).fill(-INFINITY),
+        _max: number[] = Array(7).fill(INFINITY)
+    ) {
+        this.min = _min;
+        this.max = _max;
 
         this.normals.forEach((n) => n.normalize());
     }
 
-    fromVertexBuffers(buffers: THREE.Float32BufferAttribute[]) {
+    applyMatrix(matrix: THREE.Matrix4): this {
+        throw new Error("not Implemented");
+    }
+
+    clone(): DOP14 {
+        return new DOP14().copy(this);
+    }
+
+    containsDOP14(dop14: DOP14): boolean {
+        throw new Error("not Implemented");
+    }
+
+    containsPoint(point: THREE.Vector3): boolean {
+        throw new Error("not Implemented");
+    }
+
+    copy(dop14: DOP14): this {
+        this.min = dop14.min;
+        this.max = dop14.max;
+
+        return this;
+    }
+
+    equals(dop14: DOP14): boolean {
+        throw new Error("not Implemented");
+    }
+
+    getCenter(target: THREE.Vector3): THREE.Vector3 {
+        throw new Error("not Implemented");
+    }
+
+    intersectsDOP14(dop14: DOP14): boolean {
+        throw new Error("not Implemented");
+    }
+
+    setFromArray(array: number[]): this {
+        throw new Error("not Implemented");
+    }
+
+    setFromBufferAttribute(attribute: THREE.BufferAttribute): this {
+        throw new Error("not Implemented");
+    }
+
+    setFromObject(object: THREE.Object3D, precise: boolean): this {
+        throw new Error("not Implemented");
+    }
+
+    setFromPoints(points: THREE.Vector3): this {
+        throw new Error("not Implemented");
+    }
+
+    setFromVertexBuffers(buffers: THREE.Float32BufferAttribute[]) {
+        // no up to spec, should be replaced
         // iterate vertices
         const minRecord = Array(7).fill(Number.MAX_VALUE);
         const maxRecord = Array(7).fill(Number.MIN_VALUE);
@@ -47,60 +104,7 @@ export default class DOP14 {
         this.max = maxRecord;
     }
 
-    planes() {
-        const PLANE_SIZE = 0.2;
-
-        const planes = [];
-
-        for (let i = 0; i < 7; i++) {
-            const n = this.normals[i].normalize();
-
-            const p1 = new THREE.PlaneGeometry(PLANE_SIZE, PLANE_SIZE, 1, 1);
-            const p1Mesh = new THREE.Mesh(
-                p1,
-                new THREE.MeshBasicMaterial({
-                    color: 0x0000ff,
-                    side: THREE.DoubleSide,
-                    opacity: 0.2,
-                    transparent: true,
-                })
-            );
-            p1Mesh.position.copy(n.clone().multiplyScalar(this.min[i]));
-            const lookAtMatrix = new THREE.Matrix4().lookAt(
-                p1Mesh.position,
-                new THREE.Vector3(),
-                new THREE.Vector3(0, 1, 0)
-            );
-            const rotation = new THREE.Quaternion().setFromRotationMatrix(
-                lookAtMatrix
-            );
-            p1Mesh.setRotationFromQuaternion(rotation);
-
-            const p2 = new THREE.PlaneGeometry(PLANE_SIZE, PLANE_SIZE, 1, 1);
-            const p2Mesh = new THREE.Mesh(
-                p2,
-                new THREE.MeshBasicMaterial({
-                    color: 0xff0000,
-                    side: THREE.DoubleSide,
-                    opacity: 0.2,
-                    transparent: true,
-                })
-            );
-            p2Mesh.position.copy(n.clone().multiplyScalar(this.max[i]));
-            const lookAtMatrix2 = new THREE.Matrix4().lookAt(
-                p2Mesh.position,
-                new THREE.Vector3(),
-                new THREE.Vector3(0, 1, 0)
-            );
-            const rotation2 = new THREE.Quaternion().setFromRotationMatrix(
-                lookAtMatrix2
-            );
-            p2Mesh.setRotationFromQuaternion(rotation2);
-
-            planes.push(p1Mesh);
-            planes.push(p2Mesh);
-        }
-
-        return planes;
+    union(dop14: DOP14): this {
+        throw new Error("not Implemented");
     }
 }
