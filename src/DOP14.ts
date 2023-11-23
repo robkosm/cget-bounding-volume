@@ -49,15 +49,18 @@ export default class DOP14 {
     }
 
     equals(dop14: DOP14): boolean {
-        throw new Error("not Implemented");
+        return (
+            this.min.every((val, index) => val === dop14.min[index]) &&
+            this.max.every((val, index) => val === dop14.max[index])
+        );
     }
 
     getCenter(target: THREE.Vector3): THREE.Vector3 {
-        const x = (this.max[0] + this.min[0]) / 2
-        const y = (this.max[1] + this.min[1]) / 2
-        const z = (this.max[2] + this.min[2]) / 2
+        const x = (this.max[0] + this.min[0]) / 2;
+        const y = (this.max[1] + this.min[1]) / 2;
+        const z = (this.max[2] + this.min[2]) / 2;
 
-        return target.copy(new THREE.Vector3(x,y,z))
+        return target.copy(new THREE.Vector3(x, y, z));
     }
 
     intersectsDOP14(dop14: DOP14): boolean {
