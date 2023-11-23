@@ -53,7 +53,11 @@ export default class DOP14 {
     }
 
     getCenter(target: THREE.Vector3): THREE.Vector3 {
-        throw new Error("not Implemented");
+        const x = (this.max[0] + this.min[0]) / 2
+        const y = (this.max[1] + this.min[1]) / 2
+        const z = (this.max[2] + this.min[2]) / 2
+
+        return target.copy(new THREE.Vector3(x,y,z))
     }
 
     intersectsDOP14(dop14: DOP14): boolean {
