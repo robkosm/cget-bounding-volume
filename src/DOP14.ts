@@ -34,7 +34,10 @@ export default class DOP14 {
     }
 
     containsDOP14(dop14: DOP14): boolean {
-        throw new Error("not Implemented");
+        return (
+            this.min.every((val, index) => val <= dop14.min[index]) &&
+            this.max.every((val, index) => val >= dop14.min[index])
+        );
     }
 
     containsPoint(point: THREE.Vector3): boolean {
