@@ -54,8 +54,7 @@ export default class DOPHelper extends THREE.LineSegments {
 	dispose() {
 
 		this.geometry.dispose();
-		this.material.dispose();
-
+	
 	}
 
     private edges() {
