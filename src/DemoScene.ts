@@ -3,6 +3,8 @@ import * as THREE from "three";
 import { OBJLoader } from "three/examples/jsm/Addons.js";
 import { MTLLoader } from "three/examples/jsm/Addons.js";
 
+import { GUI } from "dat.gui";
+
 import DOPHelper from "./DOPHelper";
 import DOP14 from "./DOP14";
 
@@ -24,19 +26,19 @@ export default class DemoScene extends THREE.Scene {
         this.add(this.bunny);
 
         const bunnyDOP14 = new DOP14()
-        const bunnyBuffer = this.getVertices()
-        bunnyDOP14.setFromVertexBuffers(bunnyBuffer)
-        const bunnyHelper = new DOPHelper(bunnyDOP14)
-        this.add(bunnyHelper)
+        const bunnyBuffer = this.getVertices();
+        bunnyDOP14.setFromVertexBuffers(bunnyBuffer);
+        const bunnyHelper = new DOPHelper(bunnyDOP14);
+        this.add(bunnyHelper);
 
-        const bunnyCenter = new THREE.Vector3()
-        bunnyDOP14.getCenter(bunnyCenter)
+        const bunnyCenter = new THREE.Vector3();
+        bunnyDOP14.getCenter(bunnyCenter);
 
-        const geometry = new THREE.SphereGeometry( .05, 32, 16 ); 
-        const material = new THREE.MeshBasicMaterial( { color: 0xff00ff } ); 
-        const sphere = new THREE.Mesh( geometry, material );
-        sphere.position.copy(bunnyCenter)
-        this.add( sphere );
+        const geometry = new THREE.SphereGeometry(0.01, 32, 16);
+        const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
+        const sphere = new THREE.Mesh(geometry, material);
+        sphere.position.copy(bunnyCenter);
+        this.add(sphere);
 
         // const bbox = new THREE.Box3().setFromObject(this.bunny);
         // const helper = new THREE.Box3Helper(bbox, 0xffff00);
@@ -45,6 +47,17 @@ export default class DemoScene extends THREE.Scene {
         const light = new THREE.DirectionalLight(0xffffff, 1);
         light.position.set(0, 4, 2);
         this.add(light);
+
+        const gui = new GUI();
+
+        const bunnyFolder = gui.addFolder('Bunny')
+        bunnyFolder.add(this.bunny, 'visible')
+        bunnyFolder.open()
+
+        const dop14Folder = gui.addFolder('14-DOP')
+        dop14Folder.add(bunnyHelper, 'visible').name("Show Edges");
+        dop14Folder.add(sphere, 'visible').name("Show Center Point");
+        dop14Folder.open()
 
         callback();
     }
