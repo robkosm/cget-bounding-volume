@@ -25,7 +25,7 @@ export default class DOP14 {
         this.normals.forEach((n) => n.normalize());
     }
 
-    applyMatrix(matrix: THREE.Matrix4): this {
+    applyMatrix(_matrix: THREE.Matrix4): this {
         throw new Error("not Implemented");
     }
 
@@ -40,7 +40,7 @@ export default class DOP14 {
         );
     }
 
-    containsPoint(point: THREE.Vector3): boolean {
+    containsPoint(_point: THREE.Vector3): boolean {
         throw new Error("not Implemented");
     }
 
@@ -56,7 +56,7 @@ export default class DOP14 {
             this.min.every((val, index) => val === dop14.min[index]) &&
             this.max.every((val, index) => val === dop14.max[index])
         );
-    }
+    	}
 
     getCenter(target: THREE.Vector3): THREE.Vector3 {
         const x = (this.max[0] + this.min[0]) / 2;
@@ -66,23 +66,23 @@ export default class DOP14 {
         return target.copy(new THREE.Vector3(x, y, z));
     }
 
-    intersectsDOP14(dop14: DOP14): boolean {
+    intersectsDOP14(_dop14: DOP14): boolean {
         throw new Error("not Implemented");
     }
 
-    setFromArray(array: number[]): this {
+    setFromArray(_array: number[]): this {
         throw new Error("not Implemented");
     }
 
-    setFromBufferAttribute(attribute: THREE.BufferAttribute): this {
+    setFromBufferAttribute(_attribute: THREE.BufferAttribute): this {
         throw new Error("not Implemented");
     }
 
-    setFromObject(object: THREE.Object3D, precise: boolean): this {
+    setFromObject(_object: THREE.Object3D, _precise: boolean): this {
         throw new Error("not Implemented");
     }
 
-    setFromPoints(points: THREE.Vector3): this {
+    setFromPoints(_points: THREE.Vector3): this {
         throw new Error("not Implemented");
     }
 
