@@ -29,6 +29,15 @@ export default class DemoScene extends THREE.Scene {
         const bunnyHelper = new DOPHelper(bunnyDOP14)
         this.add(bunnyHelper)
 
+        const bunnyCenter = new THREE.Vector3()
+        bunnyDOP14.getCenter(bunnyCenter)
+
+        const geometry = new THREE.SphereGeometry( .05, 32, 16 ); 
+        const material = new THREE.MeshBasicMaterial( { color: 0xff00ff } ); 
+        const sphere = new THREE.Mesh( geometry, material );
+        sphere.position.copy(bunnyCenter)
+        this.add( sphere );
+
         // const bbox = new THREE.Box3().setFromObject(this.bunny);
         // const helper = new THREE.Box3Helper(bbox, 0xffff00);
         // this.add(helper);
