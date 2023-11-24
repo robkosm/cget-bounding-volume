@@ -25,7 +25,7 @@ export default class DemoScene extends THREE.Scene {
         // this.bunny.scale.set(10, 10, 10);
         this.add(this.bunny);
 
-        const bunnyDOP14 = new DOP14()
+        const bunnyDOP14 = new DOP14();
         const bunnyBuffer = this.getVertices();
         bunnyDOP14.setFromVertexBuffers(bunnyBuffer);
         const bunnyHelper = new DOPHelper(bunnyDOP14);
@@ -50,14 +50,14 @@ export default class DemoScene extends THREE.Scene {
 
         const gui = new GUI();
 
-        const bunnyFolder = gui.addFolder('Bunny')
-        bunnyFolder.add(this.bunny, 'visible')
-        bunnyFolder.open()
+        const bunnyFolder = gui.addFolder("Bunny");
+        bunnyFolder.add(this.bunny, "visible");
+        bunnyFolder.open();
 
-        const dop14Folder = gui.addFolder('14-DOP')
-        dop14Folder.add(bunnyHelper, 'visible').name("Show Edges");
-        dop14Folder.add(sphere, 'visible').name("Show Center Point");
-        dop14Folder.open()
+        const dop14Folder = gui.addFolder("14-DOP");
+        dop14Folder.add(bunnyHelper, "visible").name("Show Edges");
+        dop14Folder.add(centerSphere, "visible").name("Show Center Point");
+        dop14Folder.open();
 
         callback();
     }
