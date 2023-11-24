@@ -40,8 +40,13 @@ export default class DOP14 {
         );
     }
 
-    containsPoint(_point: THREE.Vector3): boolean {
-        throw new Error("not Implemented");
+    containsPoint(point: THREE.Vector3): boolean {
+        for (let i = 0; i < this.normals.length; i++) {
+            const dotProduct = point.dot(this.normals[i])
+            if (!(this.min[i] < dotProduct && dotProduct < this.max[i])) return false
+        }
+
+        return true
     }
 
     copy(dop14: DOP14): this {
