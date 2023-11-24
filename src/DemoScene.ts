@@ -12,6 +12,8 @@ export default class DemoScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
     private readonly mtlLoader = new MTLLoader();
     private bunny = new THREE.Object3D();
+    private bunnyDOP14 = new DOP14();
+    containedTester = new THREE.Object3D();
 
     constructor() {
         super();
@@ -25,20 +27,26 @@ export default class DemoScene extends THREE.Scene {
         // this.bunny.scale.set(10, 10, 10);
         this.add(this.bunny);
 
-        const bunnyDOP14 = new DOP14();
         const bunnyBuffer = this.getVertices();
-        bunnyDOP14.setFromVertexBuffers(bunnyBuffer);
-        const bunnyHelper = new DOPHelper(bunnyDOP14);
+        this.bunnyDOP14.setFromVertexBuffers(bunnyBuffer);
+        const bunnyHelper = new DOPHelper(this.bunnyDOP14);
         this.add(bunnyHelper);
 
         const bunnyCenter = new THREE.Vector3();
-        bunnyDOP14.getCenter(bunnyCenter);
+        this.bunnyDOP14.getCenter(bunnyCenter);
 
         const geometry = new THREE.SphereGeometry(0.01, 32, 16);
         const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
         const centerSphere = new THREE.Mesh(geometry, material);
         centerSphere.position.copy(bunnyCenter);
         this.add(centerSphere);
+
+        {
+            const geometry = new THREE.SphereGeometry(0.01, 32, 16);
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+            this.containedTester = new THREE.Mesh(geometry, material);
+            this.add(this.containedTester);
+        }
 
         // const bbox = new THREE.Box3().setFromObject(this.bunny);
         // const helper = new THREE.Box3Helper(bbox, 0xffff00);
@@ -72,7 +80,19 @@ export default class DemoScene extends THREE.Scene {
         return modelRoot;
     }
 
-    update() {}
+    update() {
+        if (this.bunnyDOP14.containsPoint(this.containedTester.position)) {
+            (
+                (this.containedTester as THREE.Mesh)
+                    .material as THREE.MeshBasicMaterial
+            ).color.setHex(0xff0000);
+        } else {
+            (
+                (this.containedTester as THREE.Mesh)
+                    .material as THREE.MeshBasicMaterial
+            ).color.setHex(0x0000ff);
+        }
+    }
 
     getVertices(): THREE.Float32BufferAttribute[] {
         const buffers: THREE.Float32BufferAttribute[] = [];
