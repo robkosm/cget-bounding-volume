@@ -36,9 +36,9 @@ export default class DemoScene extends THREE.Scene {
 
         const geometry = new THREE.SphereGeometry(0.01, 32, 16);
         const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
-        const sphere = new THREE.Mesh(geometry, material);
-        sphere.position.copy(bunnyCenter);
-        this.add(sphere);
+        const centerSphere = new THREE.Mesh(geometry, material);
+        centerSphere.position.copy(bunnyCenter);
+        this.add(centerSphere);
 
         // const bbox = new THREE.Box3().setFromObject(this.bunny);
         // const helper = new THREE.Box3Helper(bbox, 0xffff00);
