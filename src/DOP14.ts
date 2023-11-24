@@ -42,11 +42,12 @@ export default class DOP14 {
 
     containsPoint(point: THREE.Vector3): boolean {
         for (let i = 0; i < this.normals.length; i++) {
-            const dotProduct = point.dot(this.normals[i])
-            if (!(this.min[i] < dotProduct && dotProduct < this.max[i])) return false
+            const dotProduct = point.dot(this.normals[i]);
+            if (!(this.min[i] <= dotProduct && dotProduct <= this.max[i]))
+                return false;
         }
 
-        return true
+        return true;
     }
 
     copy(dop14: DOP14): this {
@@ -61,7 +62,7 @@ export default class DOP14 {
             this.min.every((val, index) => val === dop14.min[index]) &&
             this.max.every((val, index) => val === dop14.max[index])
         );
-    	}
+    }
 
     getCenter(target: THREE.Vector3): THREE.Vector3 {
         const x = (this.max[0] + this.min[0]) / 2;
