@@ -104,11 +104,6 @@ export default class DOP14 {
     }
 
     setFromVertexBuffers(buffers: THREE.Float32BufferAttribute[]) {
-        // no up to spec, should be replaced
-        // iterate vertices
-        const minRecord = Array(7).fill(Number.MAX_VALUE);
-        const maxRecord = Array(7).fill(Number.MIN_VALUE);
-
         for (const buffer of buffers) {
             for (let i = 0; i < buffer.count; i += buffer.itemSize) {
                 const x = buffer.array[i + 0];
@@ -117,18 +112,9 @@ export default class DOP14 {
 
                 const v = new THREE.Vector3(x, y, z);
 
-                for (let j = 0; j < 7; j++) {
-                    // const dotProduct = x * this.normals[j][0] + y * this.normals[j][1] + z * this.normals[j][2]
-                    const dotProduct = v.dot(this.normals[j]);
-
-                    minRecord[j] = Math.min(minRecord[j], dotProduct);
-                    maxRecord[j] = Math.max(maxRecord[j], dotProduct);
-                }
+                this.expandByPoint(v);
             }
         }
-
-        this.min = minRecord;
-        this.max = maxRecord;
     }
 
     union(dop14: DOP14): this {
