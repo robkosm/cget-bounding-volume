@@ -64,6 +64,17 @@ export default class DOP14 {
         );
     }
 
+    expandByPoint(point: THREE.Vector3): this {
+        for (let j = 0; j < 7; j++) {
+            const dotProduct = point.dot(this.normals[j]);
+
+            this.min[j] = Math.min(this.min[j], dotProduct);
+            this.min[j] = Math.max(this.max[j], dotProduct);
+        }
+
+        return this;
+    }
+
     getCenter(target: THREE.Vector3): THREE.Vector3 {
         const x = (this.max[0] + this.min[0]) / 2;
         const y = (this.max[1] + this.min[1]) / 2;
