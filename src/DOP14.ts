@@ -75,6 +75,37 @@ export default class DOP14 {
         return this;
     }
 
+    expandByObject(object: THREE.Object3D, precise: boolean): this {
+        // Computes the DOP14 of an object (including its children),
+        // accounting for both the object's, and children's, world transforms
+
+        object.updateWorldMatrix(false, false);
+
+        const geometry = (object as THREE.Mesh).geometry;
+
+        if (geometry !== undefined) {
+            const positionAttribute = geometry.getAttribute("position");
+
+            // geometry-level bounding box
+
+            const geometryDOP14 = new DOP14().setFromBufferAttribute(geometry.getAttribute("position"));
+
+            _dop14.copy(geometryDOP14);
+
+            _dop14.applyMatrix4(object.matrixWorld);
+
+            this.union(_dop14);
+        }
+
+        const children = object.children;
+
+        for (let i = 0, l = children.length; i < l; i++) {
+            this.expandByObject(children[i], precise);
+        }
+
+        return this;
+    }
+
     getCenter(target: THREE.Vector3): THREE.Vector3 {
         const x = (this.max[0] + this.min[0]) / 2;
         const y = (this.max[1] + this.min[1]) / 2;
@@ -126,3 +157,5 @@ export default class DOP14 {
         return this;
     }
 }
+
+const _dop14 = new DOP14();
