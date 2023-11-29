@@ -33,6 +33,20 @@ export default class DOP14 {
         return new DOP14().copy(this);
     }
 
+    copy(dop14: DOP14): this {
+        this.min = dop14.min;
+        this.max = dop14.max;
+
+        return this;
+    }
+
+    makeEmpty() {
+        this.min = Array(7).fill(-INFINITY);
+        this.max = Array(7).fill(INFINITY);
+
+        return this;
+    }
+
     containsDOP14(dop14: DOP14): boolean {
         return (
             this.min.every((val, index) => val <= dop14.min[index]) &&
@@ -48,13 +62,6 @@ export default class DOP14 {
         }
 
         return true;
-    }
-
-    copy(dop14: DOP14): this {
-        this.min = dop14.min;
-        this.max = dop14.max;
-
-        return this;
     }
 
     equals(dop14: DOP14): boolean {
@@ -88,7 +95,9 @@ export default class DOP14 {
 
             // geometry-level bounding box
 
-            const geometryDOP14 = new DOP14().setFromBufferAttribute(geometry.getAttribute("position"));
+            const geometryDOP14 = new DOP14().setFromBufferAttribute(
+                geometry.getAttribute("position")
+            );
 
             _dop14.copy(geometryDOP14);
 
@@ -123,6 +132,8 @@ export default class DOP14 {
     }
 
     setFromBufferAttribute(attribute: THREE.BufferAttribute): this {
+        // TODO: reset
+
         for (let i = 0; i < attribute.count; i += attribute.itemSize) {
             const x = attribute.array[i + 0];
             const y = attribute.array[i + 1];
@@ -146,7 +157,6 @@ export default class DOP14 {
 
     setFromVertexBuffers(buffers: THREE.Float32BufferAttribute[]) {
         for (const buffer of buffers) {
-            
         }
     }
 
