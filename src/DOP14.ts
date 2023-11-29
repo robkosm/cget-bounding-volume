@@ -132,7 +132,7 @@ export default class DOP14 {
     }
 
     setFromBufferAttribute(attribute: THREE.BufferAttribute): this {
-        // TODO: reset
+        this.makeEmpty();
 
         for (let i = 0; i < attribute.count; i += attribute.itemSize) {
             const x = attribute.array[i + 0];
@@ -157,6 +157,7 @@ export default class DOP14 {
 
     setFromVertexBuffers(buffers: THREE.Float32BufferAttribute[]) {
         for (const buffer of buffers) {
+            this.setFromBufferAttribute(buffer);
         }
     }
 
