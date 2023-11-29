@@ -122,8 +122,18 @@ export default class DOP14 {
         throw new Error("not Implemented");
     }
 
-    setFromBufferAttribute(_attribute: THREE.BufferAttribute): this {
-        throw new Error("not Implemented");
+    setFromBufferAttribute(attribute: THREE.BufferAttribute): this {
+        for (let i = 0; i < attribute.count; i += attribute.itemSize) {
+            const x = attribute.array[i + 0];
+            const y = attribute.array[i + 1];
+            const z = attribute.array[i + 2];
+
+            const v = new THREE.Vector3(x, y, z);
+
+            this.expandByPoint(v);
+        }
+
+        return this;
     }
 
     setFromObject(_object: THREE.Object3D, _precise: boolean): this {
@@ -136,15 +146,7 @@ export default class DOP14 {
 
     setFromVertexBuffers(buffers: THREE.Float32BufferAttribute[]) {
         for (const buffer of buffers) {
-            for (let i = 0; i < buffer.count; i += buffer.itemSize) {
-                const x = buffer.array[i + 0];
-                const y = buffer.array[i + 1];
-                const z = buffer.array[i + 2];
-
-                const v = new THREE.Vector3(x, y, z);
-
-                this.expandByPoint(v);
-            }
+            
         }
     }
 
