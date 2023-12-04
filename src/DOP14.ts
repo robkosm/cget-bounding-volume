@@ -25,6 +25,10 @@ export default class DOP14 {
     }
 
     applyMatrix4(matrix: THREE.Matrix4): this {
+        if (this.isEmpty()) {
+            return this;
+        }
+
         function getIntersectionLine(
             plane1Normal: THREE.Vector3,
             plane1Distance: number,
@@ -249,8 +253,8 @@ export default class DOP14 {
     }
 
     copy(dop14: DOP14): this {
-        this.min = dop14.min;
-        this.max = dop14.max;
+        this.min = [...dop14.min];
+        this.max = [...dop14.max];
 
         return this;
     }
@@ -314,8 +318,9 @@ export default class DOP14 {
 
             // geometry-level bounding box
 
+            if (positionAttribute instanceof THREE.BufferAttribute) {
                 const geometryDOP14 = new DOP14().setFromBufferAttribute(
-                geometry.getAttribute("position") as THREE.BufferAttribute
+                    positionAttribute as THREE.BufferAttribute
                 );
 
                 _dop14.copy(geometryDOP14);
@@ -323,6 +328,7 @@ export default class DOP14 {
                 _dop14.applyMatrix4(object.matrixWorld);
 
                 this.union(_dop14);
+            }
         }
 
         const children = object.children;
