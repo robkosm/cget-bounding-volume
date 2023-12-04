@@ -260,7 +260,7 @@ export default class DOP14 {
     }
 
     isEmpty(): boolean {
-        return this.min.every((val, index) => !isFinite(val));
+        return this.min.every((val) => !isFinite(val));
     }
 
     makeEmpty(): this {
