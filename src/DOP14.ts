@@ -230,17 +230,17 @@ export default class DOP14 {
             }
         }
 
-        const representativePoints: THREE.Vector3[] = []
+        const representativePoints: THREE.Vector3[] = [];
         for (const ls of lineSegments) {
-            representativePoints.push(ls[0], ls[1])
+            representativePoints.push(ls[0], ls[1]);
         }
 
-        const transformedRepresentativePoints: THREE.Vector3[] = []
+        const transformedRepresentativePoints: THREE.Vector3[] = [];
         for (const rp of representativePoints) {
-            transformedRepresentativePoints.push(rp.applyMatrix4(matrix))
+            transformedRepresentativePoints.push(rp.applyMatrix4(matrix));
         }
-        
-        this.setFromPoints( transformedRepresentativePoints );
+
+        this.setFromPoints(transformedRepresentativePoints);
 
         return this;
     }
@@ -363,12 +363,20 @@ export default class DOP14 {
         return this;
     }
 
-    setFromObject(_object: THREE.Object3D, _precise: boolean): this {
-        throw new Error("not Implemented");
+    setFromObject(object: THREE.Object3D, precise: boolean = false): this {
+        this.makeEmpty();
+
+        return this.expandByObject(object, precise);
     }
 
-    setFromPoints(_points: THREE.Vector3[]): this {
-        throw new Error("not Implemented");
+    setFromPoints(points: THREE.Vector3[]): this {
+        this.makeEmpty();
+
+        for (const p of points) {
+            this.expandByPoint(p);
+        }
+
+        return this;
     }
 
     setFromVertexBuffers(buffers: THREE.Float32BufferAttribute[]) {
