@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { INFINITY } from "three/examples/jsm/nodes/Nodes.js";
 
 export default class DOP14 {
     isDOP14: boolean = true;
@@ -16,8 +15,8 @@ export default class DOP14 {
     ];
 
     constructor(
-        _min: number[] = Array(7).fill(-INFINITY),
-        _max: number[] = Array(7).fill(INFINITY)
+        _min: number[] = Array(7).fill(Number.POSITIVE_INFINITY),
+        _max: number[] = Array(7).fill(Number.NEGATIVE_INFINITY)
     ) {
         this.min = _min;
         this.max = _max;
@@ -256,9 +255,13 @@ export default class DOP14 {
         return this;
     }
 
-    makeEmpty() {
-        this.min = Array(7).fill(-INFINITY);
-        this.max = Array(7).fill(INFINITY);
+    isEmpty(): boolean {
+        return this.min.every((val, index) => !isFinite(val));
+    }
+
+    makeEmpty(): this {
+        this.min = Array(7).fill(Number.POSITIVE_INFINITY);
+        this.max = Array(7).fill(Number.NEGATIVE_INFINITY);
 
         return this;
     }
@@ -292,7 +295,7 @@ export default class DOP14 {
             const dotProduct = point.dot(this.normals[j]);
 
             this.min[j] = Math.min(this.min[j], dotProduct);
-            this.min[j] = Math.max(this.max[j], dotProduct);
+            this.max[j] = Math.max(this.max[j], dotProduct);
         }
 
         return this;
@@ -311,15 +314,15 @@ export default class DOP14 {
 
             // geometry-level bounding box
 
-            const geometryDOP14 = new DOP14().setFromBufferAttribute(
+                const geometryDOP14 = new DOP14().setFromBufferAttribute(
                 geometry.getAttribute("position") as THREE.BufferAttribute
-            );
+                );
 
-            _dop14.copy(geometryDOP14);
+                _dop14.copy(geometryDOP14);
 
-            _dop14.applyMatrix4(object.matrixWorld);
+                _dop14.applyMatrix4(object.matrixWorld);
 
-            this.union(_dop14);
+                this.union(_dop14);
         }
 
         const children = object.children;
