@@ -304,15 +304,15 @@ export default class DOP14 {
 
         object.updateWorldMatrix(false, false);
 
+        if (object instanceof THREE.Mesh) {
             const geometry = (object as THREE.Mesh).geometry;
 
-        if (geometry !== undefined) {
             const positionAttribute = geometry.getAttribute("position");
 
             // geometry-level bounding box
 
             const geometryDOP14 = new DOP14().setFromBufferAttribute(
-                geometry.getAttribute("position")
+                geometry.getAttribute("position") as THREE.BufferAttribute
             );
 
             _dop14.copy(geometryDOP14);
