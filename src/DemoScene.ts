@@ -6,13 +6,13 @@ import { MTLLoader } from "three/examples/jsm/Addons.js";
 import { GUI } from "dat.gui";
 
 import DOPHelper from "./DOPHelper";
-import DOP14 from "./DOP14";
+import DOP from "./DOP14";
 
 export default class DemoScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
     private readonly mtlLoader = new MTLLoader();
     private bunny = new THREE.Object3D();
-    private bunnyDOP14 = new DOP14();
+    private bunnyDOP = new DOP(14);
     containedTester = new THREE.Object3D();
 
     constructor() {
@@ -28,13 +28,13 @@ export default class DemoScene extends THREE.Scene {
         this.add(this.bunny);
 
         // const bunnyBuffer = this.getVertices();
-        // this.bunnyDOP14.setFromVertexBuffers(bunnyBuffer);
-        this.bunnyDOP14.setFromObject(this.bunny);
-        const bunnyHelper = new DOPHelper(this.bunnyDOP14);
+        // this.bunnyDOP.setFromVertexBuffers(bunnyBuffer);
+        this.bunnyDOP.setFromObject(this.bunny);
+        const bunnyHelper = new DOPHelper(this.bunnyDOP);
         this.add(bunnyHelper);
 
         const bunnyCenter = new THREE.Vector3();
-        this.bunnyDOP14.getCenter(bunnyCenter);
+        this.bunnyDOP.getCenter(bunnyCenter);
 
         const geometry = new THREE.SphereGeometry(0.01, 32, 16);
         const material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
@@ -63,10 +63,10 @@ export default class DemoScene extends THREE.Scene {
         bunnyFolder.add(this.bunny, "visible");
         bunnyFolder.open();
 
-        const dop14Folder = gui.addFolder("14-DOP");
-        dop14Folder.add(bunnyHelper, "visible").name("Show Edges");
-        dop14Folder.add(centerSphere, "visible").name("Show Center Point");
-        dop14Folder.open();
+        const DOPFolder = gui.addFolder("14-DOP");
+        DOPFolder.add(bunnyHelper, "visible").name("Show Edges");
+        DOPFolder.add(centerSphere, "visible").name("Show Center Point");
+        DOPFolder.open();
 
         callback();
     }
@@ -82,7 +82,7 @@ export default class DemoScene extends THREE.Scene {
     }
 
     update() {
-        if (this.bunnyDOP14.containsPoint(this.containedTester.position)) {
+        if (this.bunnyDOP.containsPoint(this.containedTester.position)) {
             (
                 (this.containedTester as THREE.Mesh)
                     .material as THREE.MeshBasicMaterial
