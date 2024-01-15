@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import DOP14 from "./DOP14";
+import DOP from "./DOP14";
 
 export default class DOPHelper extends THREE.LineSegments {
-    dop: DOP14
+    dop: DOP
     color: THREE.Color
     type: string
 
-    constructor(_dop: DOP14, _color: THREE.Color = new THREE.Color(0xffff00)) {
+    constructor(_dop: DOP, _color: THREE.Color = new THREE.Color(0xffff00)) {
         const geometry = new THREE.BufferGeometry();
         super( geometry, new THREE.LineBasicMaterial( { color: _color, toneMapped: false } ) );
 
