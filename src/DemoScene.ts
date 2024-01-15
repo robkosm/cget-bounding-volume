@@ -12,11 +12,14 @@ export default class DemoScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
     private readonly mtlLoader = new MTLLoader();
     private bunny = new THREE.Object3D();
-    private bunnyDOP = new DOP(14);
+    private bunnyDOP: DOP;
+    k: number;
     containedTester = new THREE.Object3D();
 
     constructor() {
         super();
+        this.k = 26;
+        this.bunnyDOP = new DOP(26);
     }
 
     async initialize(callback: Function) {
@@ -29,8 +32,10 @@ export default class DemoScene extends THREE.Scene {
 
         // const bunnyBuffer = this.getVertices();
         // this.bunnyDOP.setFromVertexBuffers(bunnyBuffer);
+        // this.bunnyDOP = new DOP(18);
         this.bunnyDOP.setFromObject(this.bunny);
-        const bunnyHelper = new DOPHelper(this.bunnyDOP);
+        let bunnyHelper = new DOPHelper(this.bunnyDOP);
+        console.log(bunnyHelper);
         this.add(bunnyHelper);
 
         const bunnyCenter = new THREE.Vector3();
@@ -63,7 +68,28 @@ export default class DemoScene extends THREE.Scene {
         bunnyFolder.add(this.bunny, "visible");
         bunnyFolder.open();
 
-        const DOPFolder = gui.addFolder("14-DOP");
+        const DOPFolder = gui.addFolder("DOP");
+        DOPFolder.add(this, "k", [6, 14, 18, 26]).onChange(() => {
+            this.bunnyDOP = new DOP(Number(this.k));
+            // console.log(this.bunnyDOP);
+
+            this.bunnyDOP.setFromObject(this.bunny);
+            // console.log(this.bunnyDOP);
+
+            // console.log(this.k, this.bunny);
+            
+
+            const newBunnyHelper = new DOPHelper(this.bunnyDOP);
+
+            bunnyHelper.add( newBunnyHelper );
+
+            bunnyHelper.parent.attach(newBunnyHelper );
+
+            bunnyHelper.parent.remove( bunnyHelper )
+
+            bunnyHelper = newBunnyHelper
+            
+        });
         DOPFolder.add(bunnyHelper, "visible").name("Show Edges");
         DOPFolder.add(centerSphere, "visible").name("Show Center Point");
         DOPFolder.open();

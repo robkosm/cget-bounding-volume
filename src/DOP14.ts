@@ -5,12 +5,12 @@ export default class DOP {
     k: number;
     min: number[];
     max: number[];
-    normals: THREE.Vector3[] = [];
+    normals: THREE.Vector3[];
 
     constructor(
         _k: number,
-        _min: number[] = Array(this.k).fill(Number.POSITIVE_INFINITY),
-        _max: number[] = Array(this.k).fill(Number.NEGATIVE_INFINITY)
+        _min: number[] = Array(_k).fill(Number.POSITIVE_INFINITY),
+        _max: number[] = Array(_k).fill(Number.NEGATIVE_INFINITY)
     ) {
         this.min = _min;
         this.max = _max;
@@ -21,7 +21,7 @@ export default class DOP {
                 this.normals = [
                     new THREE.Vector3(1, 0, 0),
                     new THREE.Vector3(0, 1, 0),
-                    new THREE.Vector3(0, 0, 1)
+                    new THREE.Vector3(0, 0, 1),
                 ];
                 break;
 
@@ -47,7 +47,7 @@ export default class DOP {
                     new THREE.Vector3(0, 1, 1),
                     new THREE.Vector3(1, -1, 0),
                     new THREE.Vector3(1, 0, -1),
-                    new THREE.Vector3(0, 1, -1)
+                    new THREE.Vector3(0, 1, -1),
                 ];
                 break;
 
@@ -65,9 +65,13 @@ export default class DOP {
                     new THREE.Vector3(0, 1, 1),
                     new THREE.Vector3(1, -1, 0),
                     new THREE.Vector3(1, 0, -1),
-                    new THREE.Vector3(0, 1, -1)
+                    new THREE.Vector3(0, 1, -1),
                 ];
                 break;
+
+            default:
+                console.log("wrong k");
+                this.normals = [];
         }
 
         this.normals.forEach((n) => n.normalize());
@@ -313,8 +317,8 @@ export default class DOP {
     }
 
     makeEmpty(): this {
-        this.min = Array(this.k).fill(Number.POSITIVE_INFINITY);
-        this.max = Array(this.k).fill(Number.NEGATIVE_INFINITY);
+        this.min = Array(this.k / 2).fill(Number.POSITIVE_INFINITY);
+        this.max = Array(this.k / 2).fill(Number.NEGATIVE_INFINITY);
 
         return this;
     }
@@ -344,7 +348,7 @@ export default class DOP {
     }
 
     expandByPoint(point: THREE.Vector3): this {
-        for (let j = 0; j < this.k; j++) {
+        for (let j = 0; j < this.normals.length; j++) {
             const dotProduct = point.dot(this.normals[j]);
 
             this.min[j] = Math.min(this.min[j], dotProduct);
@@ -372,6 +376,7 @@ export default class DOP {
                     positionAttribute as THREE.BufferAttribute
                 );
 
+                const _DOP = new DOP(this.k);
                 _DOP.copy(geometryDOP);
 
                 _DOP.applyMatrix4(object.matrixWorld);
@@ -453,4 +458,4 @@ export default class DOP {
     }
 }
 
-const _DOP = new DOP(14); // TODO change this to be generic
+// const _DOP = new DOP(18); // TODO change this to be generic
