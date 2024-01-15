@@ -1,25 +1,74 @@
 import * as THREE from "three";
 
-export default class DOP14 {
-    isDOP14: boolean = true;
+export default class DOP {
+    isDOP: boolean = true;
+    k: number;
     min: number[];
     max: number[];
-    normals = [
-        new THREE.Vector3(1, 0, 0),
-        new THREE.Vector3(0, 1, 0),
-        new THREE.Vector3(0, 0, 1),
-        new THREE.Vector3(1, 1, 1),
-        new THREE.Vector3(1, -1, 1),
-        new THREE.Vector3(1, 1, -1),
-        new THREE.Vector3(1, -1, -1),
-    ];
+    normals: THREE.Vector3[] = [];
 
     constructor(
-        _min: number[] = Array(7).fill(Number.POSITIVE_INFINITY),
-        _max: number[] = Array(7).fill(Number.NEGATIVE_INFINITY)
+        _k: number,
+        _min: number[] = Array(this.k).fill(Number.POSITIVE_INFINITY),
+        _max: number[] = Array(this.k).fill(Number.NEGATIVE_INFINITY)
     ) {
         this.min = _min;
         this.max = _max;
+        this.k = _k;
+
+        switch (_k) {
+            case 6:
+                this.normals = [
+                    new THREE.Vector3(1, 0, 0),
+                    new THREE.Vector3(0, 1, 0),
+                    new THREE.Vector3(0, 0, 1)
+                ];
+                break;
+
+            case 14:
+                this.normals = [
+                    new THREE.Vector3(1, 0, 0),
+                    new THREE.Vector3(0, 1, 0),
+                    new THREE.Vector3(0, 0, 1),
+                    new THREE.Vector3(1, 1, 1),
+                    new THREE.Vector3(1, -1, 1),
+                    new THREE.Vector3(1, 1, -1),
+                    new THREE.Vector3(1, -1, -1),
+                ];
+                break;
+
+            case 18:
+                this.normals = [
+                    new THREE.Vector3(1, 0, 0),
+                    new THREE.Vector3(0, 1, 0),
+                    new THREE.Vector3(0, 0, 1),
+                    new THREE.Vector3(1, 1, 0),
+                    new THREE.Vector3(1, 0, 1),
+                    new THREE.Vector3(0, 1, 1),
+                    new THREE.Vector3(1, -1, 0),
+                    new THREE.Vector3(1, 0, -1),
+                    new THREE.Vector3(0, 1, -1)
+                ];
+                break;
+
+            case 26:
+                this.normals = [
+                    new THREE.Vector3(1, 0, 0),
+                    new THREE.Vector3(0, 1, 0),
+                    new THREE.Vector3(0, 0, 1),
+                    new THREE.Vector3(1, 1, 1),
+                    new THREE.Vector3(1, -1, 1),
+                    new THREE.Vector3(1, 1, -1),
+                    new THREE.Vector3(1, -1, -1),
+                    new THREE.Vector3(1, 1, 0),
+                    new THREE.Vector3(1, 0, 1),
+                    new THREE.Vector3(0, 1, 1),
+                    new THREE.Vector3(1, -1, 0),
+                    new THREE.Vector3(1, 0, -1),
+                    new THREE.Vector3(0, 1, -1)
+                ];
+                break;
+        }
 
         this.normals.forEach((n) => n.normalize());
     }
@@ -248,13 +297,13 @@ export default class DOP14 {
         return this;
     }
 
-    clone(): DOP14 {
-        return new DOP14().copy(this);
+    clone(): DOP {
+        return new DOP(this.k).copy(this);
     }
 
-    copy(dop14: DOP14): this {
-        this.min = [...dop14.min];
-        this.max = [...dop14.max];
+    copy(DOP: DOP): this {
+        this.min = [...DOP.min];
+        this.max = [...DOP.max];
 
         return this;
     }
@@ -264,16 +313,16 @@ export default class DOP14 {
     }
 
     makeEmpty(): this {
-        this.min = Array(7).fill(Number.POSITIVE_INFINITY);
-        this.max = Array(7).fill(Number.NEGATIVE_INFINITY);
+        this.min = Array(this.k).fill(Number.POSITIVE_INFINITY);
+        this.max = Array(this.k).fill(Number.NEGATIVE_INFINITY);
 
         return this;
     }
 
-    containsDOP14(dop14: DOP14): boolean {
+    containsDOP(DOP: DOP): boolean {
         return (
-            this.min.every((val, index) => val <= dop14.min[index]) &&
-            this.max.every((val, index) => val >= dop14.min[index])
+            this.min.every((val, index) => val <= DOP.min[index]) &&
+            this.max.every((val, index) => val >= DOP.min[index])
         );
     }
 
@@ -287,15 +336,15 @@ export default class DOP14 {
         return true;
     }
 
-    equals(dop14: DOP14): boolean {
+    equals(DOP: DOP): boolean {
         return (
-            this.min.every((val, index) => val === dop14.min[index]) &&
-            this.max.every((val, index) => val === dop14.max[index])
+            this.min.every((val, index) => val === DOP.min[index]) &&
+            this.max.every((val, index) => val === DOP.max[index])
         );
     }
 
     expandByPoint(point: THREE.Vector3): this {
-        for (let j = 0; j < 7; j++) {
+        for (let j = 0; j < this.k; j++) {
             const dotProduct = point.dot(this.normals[j]);
 
             this.min[j] = Math.min(this.min[j], dotProduct);
@@ -306,7 +355,7 @@ export default class DOP14 {
     }
 
     expandByObject(object: THREE.Object3D, precise: boolean): this {
-        // Computes the DOP14 of an object (including its children),
+        // Computes the DOP of an object (including its children),
         // accounting for both the object's, and children's, world transforms
 
         object.updateWorldMatrix(false, false);
@@ -319,15 +368,15 @@ export default class DOP14 {
             // geometry-level bounding box
 
             if (positionAttribute instanceof THREE.BufferAttribute) {
-                const geometryDOP14 = new DOP14().setFromBufferAttribute(
+                const geometryDOP = new DOP(this.k).setFromBufferAttribute(
                     positionAttribute as THREE.BufferAttribute
                 );
 
-                _dop14.copy(geometryDOP14);
+                _DOP.copy(geometryDOP);
 
-                _dop14.applyMatrix4(object.matrixWorld);
+                _DOP.applyMatrix4(object.matrixWorld);
 
-                this.union(_dop14);
+                this.union(_DOP);
             }
         }
 
@@ -348,7 +397,7 @@ export default class DOP14 {
         return target.copy(new THREE.Vector3(x, y, z));
     }
 
-    intersectsDOP14(_dop14: DOP14): boolean {
+    intersectsDOP(_DOP: DOP): boolean {
         throw new Error("not Implemented");
     }
 
@@ -394,14 +443,14 @@ export default class DOP14 {
         }
     }
 
-    union(dop14: DOP14): this {
+    union(DOP: DOP): this {
         for (let i = 0; i < this.min.length; i++) {
-            this.min[i] = Math.min(this.min[i], dop14.min[i]);
-            this.max[i] = Math.max(this.max[i], dop14.max[i]);
+            this.min[i] = Math.min(this.min[i], DOP.min[i]);
+            this.max[i] = Math.max(this.max[i], DOP.max[i]);
         }
 
         return this;
     }
 }
 
-const _dop14 = new DOP14();
+const _DOP = new DOP(14); // TODO change this to be generic
