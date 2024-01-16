@@ -94,7 +94,9 @@ export default class DemoScene extends THREE.Scene {
 
     demoObjects: DOPdemoObject[] = [];
 
-    containedTester: any;
+    containsPointTester: THREE.Object3D;
+    intersectsBoxTester: THREE.Object3D;
+    intersectsSphereTester: THREE.Object3D
 
     k: number;
 
@@ -193,10 +195,32 @@ export default class DemoScene extends THREE.Scene {
         }
 
         {
-            const geometry = new THREE.SphereGeometry(0.01, 32, 16);
+            const geometry = new THREE.SphereGeometry(.1, 32, 16);
             const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
-            this.containedTester = new THREE.Mesh(geometry, material);
-            this.add(this.containedTester);
+            this.containsPointTester = new THREE.Mesh(geometry, material);
+            this.containsPointTester.translateX(-4)
+            this.containsPointTester.translateZ(4)
+            this.add(this.containsPointTester);
+        }
+
+        {
+            const geometry = new THREE.SphereGeometry(.5, 32, 16)
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+            this.intersectsSphereTester = new THREE.Mesh(geometry, material);
+            this.intersectsSphereTester.translateX(-2)
+            this.intersectsSphereTester.translateY(.5)
+            this.intersectsSphereTester.translateZ(4)
+            this.add(this.intersectsSphereTester);
+        }
+
+        {
+            const geometry = new THREE.BoxGeometry(2, 1, 1)
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+            this.intersectsBoxTester = new THREE.Mesh(geometry, material);
+            this.intersectsBoxTester.translateX(0)
+            this.intersectsBoxTester.translateY(.5)
+            this.intersectsBoxTester.translateZ(4)
+            this.add(this.intersectsBoxTester);
         }
 
         {
@@ -220,17 +244,17 @@ export default class DemoScene extends THREE.Scene {
     }
 
     update() {
-        // if (this.bunnyDOP.containsPoint(this.containedTester.position)) {
-        //     (
-        //         (this.containedTester as THREE.Mesh)
-        //             .material as THREE.MeshBasicMaterial
-        //     ).color.setHex(0xff0000);
-        // } else {
-        //     (
-        //         (this.containedTester as THREE.Mesh)
-        //             .material as THREE.MeshBasicMaterial
-        //     ).color.setHex(0x0000ff);
-        // }
+        if (this.demoObjects.some((obj) => (obj.DOP.containsPoint(this.containsPointTester.position)))) {
+            (
+                (this.containsPointTester as THREE.Mesh)
+                    .material as THREE.MeshBasicMaterial
+            ).color.setHex(0xff00ff);
+        } else {
+            (
+                (this.containsPointTester as THREE.Mesh)
+                    .material as THREE.MeshBasicMaterial
+            ).color.setHex(0x00ffff);
+        }
     }
 
     getVertices(): THREE.Float32BufferAttribute[] {
