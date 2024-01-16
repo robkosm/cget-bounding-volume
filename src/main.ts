@@ -20,10 +20,10 @@ const orbitControls = new OrbitControls(camera, renderer.domElement);
 const scene = new DemoScene();
 scene.initialize(sceneLoaded);
 
-camera.position.z = 10;
-camera.position.y = 10;
+camera.position.z = 5;
+camera.position.y = 3;
 
-orbitControls.target = new THREE.Vector3(0, 0, 0);
+orbitControls.target = new THREE.Vector3(0, 1, 0);
 
 orbitControls.update();
 
