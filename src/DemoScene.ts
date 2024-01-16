@@ -32,15 +32,31 @@ class DOPdemoObject {
             // called when resource is loaded
             (object: THREE.Object3D) => {
                 this.object = object;
+
+                this.object.traverse((mesh) => {
+                    if (mesh instanceof THREE.Mesh) {
+                        mesh.material = new THREE.MeshStandardMaterial({
+                            color: 0xefd4ca,
+                            // color: (Math.random() * 0xFFFFFF << 0),
+                            roughness: 0.1,
+                        });
+                    }
+                });
+
                 this.object.applyMatrix4(_transform);
 
                 this.DOP.setFromObject(object);
-                this.DOPhelper = new DOPHelper(this.DOP);
+                this.DOPhelper = new DOPHelper(
+                    this.DOP,
+                    new THREE.Color(0xffffff)
+                );
                 _callback(this);
             },
             // called when loading is in progresses
             function (xhr) {
-                console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+                console.log(
+                    _name + " " + (xhr.loaded / xhr.total) * 100 + "% loaded"
+                );
             },
             // called when loading has errors
             function (error) {
@@ -53,15 +69,13 @@ class DOPdemoObject {
         this.DOP = new DOP(Number(this.k));
         this.DOP.setFromObject(this.object);
 
-        const newDOPhelper = new DOPHelper(this.DOP);
+        const newDOPhelper = new DOPHelper(this.DOP, new THREE.Color(0xffffff));
 
         // replace line rendered mesh
         this.DOPhelper.add(newDOPhelper);
         this.DOPhelper.parent.attach(newDOPhelper);
         this.DOPhelper.parent.remove(this.DOPhelper);
         this.DOPhelper = newDOPhelper;
-
-        console.log(_newK, this.DOP);
     }
 
     addToGUI(_gui: GUI) {
@@ -69,7 +83,6 @@ class DOPdemoObject {
         DOPFolder.add(this, "k", [6, 14, 18, 26]).onChange(() => {
             this.changeK(Number(this.k));
         });
-        console.log(this.DOPhelper);
         DOPFolder.add(this.DOPhelper, "visible").name("Show DOP Edges");
     }
 }
@@ -83,10 +96,6 @@ export default class DemoScene extends THREE.Scene {
 
     containedTester: any;
 
-    // private bunny = new THREE.Object3D();
-    // private bunnyDOP: DOP;
-    // private bunnyHelper: DOPHelper;
-
     k: number;
 
     constructor() {
@@ -96,11 +105,14 @@ export default class DemoScene extends THREE.Scene {
     }
 
     async initialize(callback: Function) {
-        const axesHelper = new THREE.AxesHelper(5);
-        this.add(axesHelper);
+        // this.background = new THREE.Color(0xf1f1f1);
+        this.background = new THREE.Color(0x10101a);
+
+        const gridHelper = new THREE.GridHelper(10, 10);
+        this.add(gridHelper);
 
         {
-            const translation = new THREE.Vector3(-6, 0, 0);
+            const translation = new THREE.Vector3(-4, 0, 0);
             const scale = new THREE.Vector3(0.8, 0.8, 0.8);
             const rotation = new THREE.Quaternion().setFromEuler(
                 new THREE.Euler(0, 0, 0, "XYZ")
@@ -127,7 +139,7 @@ export default class DemoScene extends THREE.Scene {
         }
 
         {
-            const translation = new THREE.Vector3(0, -1, 0);
+            const translation = new THREE.Vector3(1, -0.6, 0);
             const scale = new THREE.Vector3(20, 20, 20);
             const rotation = new THREE.Quaternion().setFromEuler(
                 new THREE.Euler(0, 0, 0, "XYZ")
@@ -154,10 +166,10 @@ export default class DemoScene extends THREE.Scene {
         }
 
         {
-            const translation = new THREE.Vector3(6, 2, 0);
+            const translation = new THREE.Vector3(4, 2.5, 0);
             const scale = new THREE.Vector3(0.01, 0.01, 0.01);
             const rotation = new THREE.Quaternion().setFromEuler(
-                new THREE.Euler(-90, 0, 0, "XYZ")
+                new THREE.Euler(-Math.PI / 2, 0, 0, "XYZ")
             );
 
             const transform = new THREE.Matrix4().compose(
@@ -180,87 +192,6 @@ export default class DemoScene extends THREE.Scene {
             );
         }
 
-        // // load a resource
-        // this.objLoader.load(
-        //     // resource URL
-        //     "assets/stanford-bunny.obj",
-        //     // called when resource is loaded
-        //     (object) => {
-        //         this.bunny = object;
-        //         this.bunny.scale.set(25, 25, 25)
-        //         this.bunny.translateX(-6)
-        //         this.bunny.translateY(-.75)
-        //         this.add(object);
-
-        //         this.bunnyDOP.setFromObject(this.bunny);
-        //         this.bunnyHelper = new DOPHelper(this.bunnyDOP);
-        //         this.add(this.bunnyHelper);
-        //     },
-        //     // called when loading is in progresses
-        //     function (xhr) {
-        //         console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-        //     },
-        //     // called when loading has errors
-        //     function (error) {
-        //         console.log("An error happened");
-        //     }
-        // );
-
-        // // load a resource
-        // this.objLoader.load(
-        //     // resource URL
-        //     "assets/nefertiti.obj",
-        //     // called when resource is loaded
-        //     (object) => {
-        //         this.nefertiti = object;
-        //         this.nefertiti.scale.set(.01, .01, .01);
-        //         this.nefertiti.rotateX(-90);
-        //         this.nefertiti.translateX(6)
-        //         this.nefertiti.translateY(-1)
-        //         this.nefertiti.translateZ(2.5)
-        //         this.add(object);
-
-        //         this.nefertitiDOP.setFromObject(this.nefertiti);
-        //         this.nefertitiHelper = new DOPHelper(this.nefertitiDOP);
-        //         this.add(this.nefertitiHelper);
-
-        //         console.log(this.nefertitiDOP)
-        //     },
-        //     // called when loading is in progresses
-        //     function (xhr) {
-        //         console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-        //     },
-        //     // called when loading has errors
-        //     function (error) {
-        //         console.log("An error happened");
-        //     }
-        // );
-
-        // // load a resource
-        // this.objLoader.load(
-        //     // resource URL
-        //     "assets/teapot.obj",
-        //     // called when resource is loaded
-        //     (object) => {
-        //         this.teapot = object;
-        //         this.add(object);
-
-        //         this.teapotDOP.setFromObject(this.teapot);
-        //         this.teapotHelper = new DOPHelper(this.teapotDOP);
-        //         this.add(this.teapotHelper);
-
-        //         console.log(this.teapotDOP)
-        //     },
-        //     // called when loading is in progresses
-        //     function (xhr) {
-        //         console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-        //     },
-        //     // called when loading has errors
-        //     function (error) {
-        //         console.log("An error happened");
-        //     }
-        // );
-
         {
             const geometry = new THREE.SphereGeometry(0.01, 32, 16);
             const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
@@ -268,37 +199,22 @@ export default class DemoScene extends THREE.Scene {
             this.add(this.containedTester);
         }
 
-        // const bbox = new THREE.Box3().setFromObject(this.bunny);
-        // const helper = new THREE.Box3Helper(bbox, 0xffff00);
-        // this.add(helper);
+        {
+            const light = new THREE.AmbientLight(0x888888); // soft white light
+            this.add(light);
+        }
 
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(0, 4, 2);
-        this.add(light);
+        {
+            const light = new THREE.DirectionalLight(0xffffee, 1);
+            light.position.set(0, 4, 2);
+            this.add(light);
+        }
 
-        // const bunnyFolder = gui.addFolder("Bunny");
-        // bunnyFolder.add(this.bunny, "visible");
-        // bunnyFolder.open();
-
-        // const DOPFolder = gui.addFolder("DOP");
-        // DOPFolder.add(this, "k", [6, 14, 18, 26]).onChange(() => {
-        //     this.bunnyDOP = new DOP(Number(this.k));
-        //     // console.log(this.bunnyDOP);
-
-        //     this.bunnyDOP.setFromObject(this.bunny);
-        //     // console.log(this.bunnyDOP);
-
-        //     // console.log(this.k, this.bunny);
-
-        //     const newBunnyHelper = new DOPHelper(this.bunnyDOP);
-
-        //     this.bunnyHelper.add(newBunnyHelper);
-        //     this.bunnyHelper.parent.attach(newBunnyHelper);
-        //     this.bunnyHelper.parent.remove(this.bunnyHelper);
-        //     this.bunnyHelper = newBunnyHelper;
-        // });
-        // DOPFolder.add(this.bunnyHelper, "visible").name("Show Edges");
-        // DOPFolder.open();
+        {
+            const light = new THREE.DirectionalLight(0x0000ff, 0.1);
+            light.position.set(0, -4, -2);
+            this.add(light);
+        }
 
         callback();
     }
