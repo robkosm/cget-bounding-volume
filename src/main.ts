@@ -4,17 +4,11 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import DemoScene from "./DemoScene";
 
-const scene = new DemoScene();
-scene.initialize(sceneLoaded);
-
-const axesHelper = new THREE.AxesHelper(5);
-scene.add(axesHelper);
-
 const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
-    0.01,
-    10
+    .1,
+    100
 );
 
 const renderer = new THREE.WebGLRenderer();
@@ -23,11 +17,13 @@ document.body.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 
+const scene = new DemoScene();
+scene.initialize(sceneLoaded);
 
-camera.position.z = .2;
-camera.position.y = .2;
+camera.position.z = 10;
+camera.position.y = 10;
 
-orbitControls.target = new THREE.Vector3(0, .1, 0);
+orbitControls.target = new THREE.Vector3(0, 0, 0);
 
 orbitControls.update();
 
