@@ -22,6 +22,7 @@ class DOPdemoObject {
         _callback: Function
     ) {
         this.name = _name;
+        this.object = new THREE.Object3D();
         this.k = 14;
         this.DOP = new DOP(this.k);
         this.DOPhelper = new DOPHelper(this.DOP);
@@ -73,8 +74,8 @@ class DOPdemoObject {
 
         // replace line rendered mesh
         this.DOPhelper.add(newDOPhelper);
-        this.DOPhelper.parent.attach(newDOPhelper);
-        this.DOPhelper.parent.remove(this.DOPhelper);
+        this.DOPhelper.parent?.attach(newDOPhelper);
+        this.DOPhelper.parent?.remove(this.DOPhelper);
         this.DOPhelper = newDOPhelper;
     }
 
@@ -199,7 +200,7 @@ export default class DemoScene extends THREE.Scene {
             const material = new THREE.MeshStandardMaterial({
                 color: 0x888888,
                 emissive: 0x00ffff,
-                emissiveIntensity: .5
+                emissiveIntensity: 0.5,
             });
             this.containsPointTester = new THREE.Mesh(geometry, material);
             this.containsPointTester.translateX(-4);
@@ -212,7 +213,7 @@ export default class DemoScene extends THREE.Scene {
             const material = new THREE.MeshStandardMaterial({
                 color: 0x888888,
                 emissive: 0x00ffff,
-                emissiveIntensity: .5
+                emissiveIntensity: 0.5,
             });
             this.intersectsSphereTester = new THREE.Mesh(geometry, material);
             this.intersectsSphereTester.translateX(-2);
@@ -226,7 +227,7 @@ export default class DemoScene extends THREE.Scene {
             const material = new THREE.MeshStandardMaterial({
                 color: 0x00ffff,
                 emissive: 0x00ffff,
-                emissiveIntensity: .5
+                emissiveIntensity: 0.5,
             });
             this.intersectsBoxTester = new THREE.Mesh(geometry, material);
             this.intersectsBoxTester.translateX(0);
@@ -282,7 +283,12 @@ export default class DemoScene extends THREE.Scene {
 
         if (
             this.demoObjects.some((obj) =>
-                obj.DOP.intersectsSphere(new THREE.Sphere(this.intersectsSphereTester.position, this.intersectsSphereTester.geometry.parameters.radius))
+                obj.DOP.intersectsSphere(
+                    new THREE.Sphere(
+                        this.intersectsSphereTester.position,
+                        this.intersectsSphereTester.geometry.parameters.radius
+                    )
+                )
             )
         ) {
             // (
@@ -308,10 +314,11 @@ export default class DemoScene extends THREE.Scene {
         if (
             this.demoObjects.some((obj) =>
                 // obj.DOP.intersectsBox(this.intersectsBoxTester.geometry.boundingBox)
-                obj.DOP.intersectsBox(new THREE.Box3().setFromObject(this.intersectsBoxTester))
+                obj.DOP.intersectsBox(
+                    new THREE.Box3().setFromObject(this.intersectsBoxTester)
+                )
             )
         ) {
-            
             // (
             //     (this.containsPointTester as THREE.Mesh)
             //         .material as THREE.MeshStandardMaterial
