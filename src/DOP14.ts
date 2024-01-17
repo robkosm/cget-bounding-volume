@@ -1,5 +1,49 @@
 import * as THREE from "three";
 
+const DOPnormals = {
+    "6": [
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, 0, 1),
+    ],
+    "14": [
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, 0, 1),
+        new THREE.Vector3(1, 1, 1),
+        new THREE.Vector3(1, -1, 1),
+        new THREE.Vector3(1, 1, -1),
+        new THREE.Vector3(1, -1, -1),
+    ],
+    "18": [
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, 0, 1),
+        new THREE.Vector3(1, 1, 0),
+        new THREE.Vector3(1, 0, 1),
+        new THREE.Vector3(0, 1, 1),
+        new THREE.Vector3(1, -1, 0),
+        new THREE.Vector3(1, 0, -1),
+        new THREE.Vector3(0, 1, -1),
+    ],
+
+    "26": [
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, 0, 1),
+        new THREE.Vector3(1, 1, 1),
+        new THREE.Vector3(1, -1, 1),
+        new THREE.Vector3(1, 1, -1),
+        new THREE.Vector3(1, -1, -1),
+        new THREE.Vector3(1, 1, 0),
+        new THREE.Vector3(1, 0, 1),
+        new THREE.Vector3(0, 1, 1),
+        new THREE.Vector3(1, -1, 0),
+        new THREE.Vector3(1, 0, -1),
+        new THREE.Vector3(0, 1, -1),
+    ],
+};
+
 export default class DOP {
     isDOP: boolean = true;
     k: number;
@@ -16,62 +60,10 @@ export default class DOP {
         this.max = _max;
         this.k = _k;
 
-        switch (_k) {
-            case 6:
-                this.normals = [
-                    new THREE.Vector3(1, 0, 0),
-                    new THREE.Vector3(0, 1, 0),
-                    new THREE.Vector3(0, 0, 1),
-                ];
-                break;
-
-            case 14:
-                this.normals = [
-                    new THREE.Vector3(1, 0, 0),
-                    new THREE.Vector3(0, 1, 0),
-                    new THREE.Vector3(0, 0, 1),
-                    new THREE.Vector3(1, 1, 1),
-                    new THREE.Vector3(1, -1, 1),
-                    new THREE.Vector3(1, 1, -1),
-                    new THREE.Vector3(1, -1, -1),
-                ];
-                break;
-
-            case 18:
-                this.normals = [
-                    new THREE.Vector3(1, 0, 0),
-                    new THREE.Vector3(0, 1, 0),
-                    new THREE.Vector3(0, 0, 1),
-                    new THREE.Vector3(1, 1, 0),
-                    new THREE.Vector3(1, 0, 1),
-                    new THREE.Vector3(0, 1, 1),
-                    new THREE.Vector3(1, -1, 0),
-                    new THREE.Vector3(1, 0, -1),
-                    new THREE.Vector3(0, 1, -1),
-                ];
-                break;
-
-            case 26:
-                this.normals = [
-                    new THREE.Vector3(1, 0, 0),
-                    new THREE.Vector3(0, 1, 0),
-                    new THREE.Vector3(0, 0, 1),
-                    new THREE.Vector3(1, 1, 1),
-                    new THREE.Vector3(1, -1, 1),
-                    new THREE.Vector3(1, 1, -1),
-                    new THREE.Vector3(1, -1, -1),
-                    new THREE.Vector3(1, 1, 0),
-                    new THREE.Vector3(1, 0, 1),
-                    new THREE.Vector3(0, 1, 1),
-                    new THREE.Vector3(1, -1, 0),
-                    new THREE.Vector3(1, 0, -1),
-                    new THREE.Vector3(0, 1, -1),
-                ];
-                break;
-
-            default:
-                console.log("wrong k");
-                this.normals = [];
+        if (_k in DOPnormals) {
+            this.normals = DOPnormals[String(_k) as keyof typeof DOPnormals];
+        } else {
+            throw new Error("wrong k");
         }
 
         this.normals.forEach((n) => n.normalize());
@@ -408,7 +400,7 @@ export default class DOP {
         if (this.max[0] < _box.min.x || this.min[0] > _box.max.x) return false;
         if (this.max[1] < _box.min.y || this.min[1] > _box.max.y) return false;
         if (this.max[2] < _box.min.z || this.min[2] > _box.max.z) return false;
-        
+
         return true;
     }
 
@@ -416,11 +408,12 @@ export default class DOP {
         if (this.k != _DOP.k) throw new Error("different k"); // can be abstracted for kdops where normals are subsets
 
         for (let i = 0; i < this.normals.length; i++) {
-            const slabsDisjoint = this.max[i] < _DOP.min[i] || this.min[i] > _DOP.max[i]
-            if (slabsDisjoint) return false
+            const slabsDisjoint =
+                this.max[i] < _DOP.min[i] || this.min[i] > _DOP.max[i];
+            if (slabsDisjoint) return false;
         }
 
-        return true
+        return true;
     }
 
     intersectsPlane(_plane: THREE.Plane): boolean {
@@ -433,7 +426,12 @@ export default class DOP {
     intersectsSphere(_sphere: THREE.Sphere): boolean {
         for (let i = 0; i < this.normals.length; i++) {
             const dotProduct = _sphere.center.dot(this.normals[i]);
-            if (!(this.min[i] - _sphere.radius <= dotProduct && dotProduct <= this.max[i] + _sphere.radius))
+            if (
+                !(
+                    this.min[i] - _sphere.radius <= dotProduct &&
+                    dotProduct <= this.max[i] + _sphere.radius
+                )
+            )
                 return false;
         }
 
