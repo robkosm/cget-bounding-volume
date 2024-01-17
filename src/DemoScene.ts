@@ -105,6 +105,10 @@ export default class DemoScene extends THREE.Scene {
         super();
         this.k = 26;
         this.gui = new GUI();
+
+        this.containsPointTester = new THREE.Object3D();
+        this.intersectsBoxTester = new THREE.Object3D();
+        this.intersectsSphereTester = new THREE.Object3D();
     }
 
     async initialize(callback: Function) {
@@ -286,7 +290,7 @@ export default class DemoScene extends THREE.Scene {
                 obj.DOP.intersectsSphere(
                     new THREE.Sphere(
                         this.intersectsSphereTester.position,
-                        this.intersectsSphereTester.geometry.parameters.radius
+                        ((this.intersectsSphereTester as THREE.Mesh).geometry as THREE.SphereGeometry).parameters.radius
                     )
                 )
             )

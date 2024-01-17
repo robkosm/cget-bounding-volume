@@ -83,9 +83,9 @@ export default class DemoScene extends THREE.Scene {
 
             bunnyHelper.add( newBunnyHelper );
 
-            bunnyHelper.parent.attach(newBunnyHelper );
+            bunnyHelper.parent?.attach(newBunnyHelper );
 
-            bunnyHelper.parent.remove( bunnyHelper )
+            bunnyHelper.parent?.remove( bunnyHelper )
 
             bunnyHelper = newBunnyHelper
             
