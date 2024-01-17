@@ -402,7 +402,43 @@ export default class DOP {
         return target.copy(new THREE.Vector3(x, y, z));
     }
 
+    intersectsBox(_box: THREE.Box3): boolean {
+        if (this.max[0] < _box.min.x || this.min[0] > _box.max.x) return false;
+        if (this.max[1] < _box.min.y || this.min[1] > _box.max.y) return false;
+        if (this.max[2] < _box.min.z || this.min[2] > _box.max.z) return false;
+        
+        return true;
+    }
+
     intersectsDOP(_DOP: DOP): boolean {
+        if (this.k != _DOP.k) throw new Error("different k"); // can be abstracted for kdops where normals are subsets
+
+        for (let i = 0; i < this.normals.length; i++) {
+            const slabsDisjoint = this.max[i] < _DOP.min[i] || this.min[i] > _DOP.max[i]
+            if (slabsDisjoint) return false
+        }
+
+        return true
+    }
+
+    intersectsPlane(_plane: THREE.Plane): boolean {
+        throw new Error("not Implemented");
+    }
+
+    // this intersection is not perfect on the edges
+    // technically this intersects the kDOP with the spheres kDOP
+    // this can be fixed by checking the distance to the corners
+    intersectsSphere(_sphere: THREE.Sphere): boolean {
+        for (let i = 0; i < this.normals.length; i++) {
+            const dotProduct = _sphere.center.dot(this.normals[i]);
+            if (!(this.min[i] - _sphere.radius <= dotProduct && dotProduct <= this.max[i] + _sphere.radius))
+                return false;
+        }
+
+        return true;
+    }
+
+    intersectsTriangle(_triangle: THREE.Triangle): boolean {
         throw new Error("not Implemented");
     }
 

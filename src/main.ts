@@ -16,6 +16,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
+// orbitControls.enableDamping = true
+orbitControls.maxDistance = 20
+orbitControls.zoomToCursor = true
 
 const scene = new DemoScene();
 scene.initialize(sceneLoaded);

@@ -96,7 +96,7 @@ export default class DemoScene extends THREE.Scene {
 
     containsPointTester: THREE.Object3D;
     intersectsBoxTester: THREE.Object3D;
-    intersectsSphereTester: THREE.Object3D
+    intersectsSphereTester: THREE.Object3D;
 
     k: number;
 
@@ -195,31 +195,43 @@ export default class DemoScene extends THREE.Scene {
         }
 
         {
-            const geometry = new THREE.SphereGeometry(.1, 32, 16);
-            const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+            const geometry = new THREE.SphereGeometry(0.1, 32, 16);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x888888,
+                emissive: 0x00ffff,
+                emissiveIntensity: .5
+            });
             this.containsPointTester = new THREE.Mesh(geometry, material);
-            this.containsPointTester.translateX(-4)
-            this.containsPointTester.translateZ(4)
+            this.containsPointTester.translateX(-4);
+            this.containsPointTester.translateZ(4);
             this.add(this.containsPointTester);
         }
 
         {
-            const geometry = new THREE.SphereGeometry(.5, 32, 16)
-            const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+            const geometry = new THREE.SphereGeometry(0.5, 32, 16);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x888888,
+                emissive: 0x00ffff,
+                emissiveIntensity: .5
+            });
             this.intersectsSphereTester = new THREE.Mesh(geometry, material);
-            this.intersectsSphereTester.translateX(-2)
-            this.intersectsSphereTester.translateY(.5)
-            this.intersectsSphereTester.translateZ(4)
+            this.intersectsSphereTester.translateX(-2);
+            this.intersectsSphereTester.translateY(0.5);
+            this.intersectsSphereTester.translateZ(4);
             this.add(this.intersectsSphereTester);
         }
 
         {
-            const geometry = new THREE.BoxGeometry(2, 1, 1)
-            const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+            const geometry = new THREE.BoxGeometry(2, 1, 1);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x00ffff,
+                emissive: 0x00ffff,
+                emissiveIntensity: .5
+            });
             this.intersectsBoxTester = new THREE.Mesh(geometry, material);
-            this.intersectsBoxTester.translateX(0)
-            this.intersectsBoxTester.translateY(.5)
-            this.intersectsBoxTester.translateZ(4)
+            this.intersectsBoxTester.translateX(0);
+            this.intersectsBoxTester.translateY(0.5);
+            this.intersectsBoxTester.translateZ(4);
             this.add(this.intersectsBoxTester);
         }
 
@@ -244,16 +256,79 @@ export default class DemoScene extends THREE.Scene {
     }
 
     update() {
-        if (this.demoObjects.some((obj) => (obj.DOP.containsPoint(this.containsPointTester.position)))) {
+        if (
+            this.demoObjects.some((obj) =>
+                obj.DOP.containsPoint(this.containsPointTester.position)
+            )
+        ) {
+            // (
+            //     (this.containsPointTester as THREE.Mesh)
+            //         .material as THREE.MeshStandardMaterial
+            // ).color.setHex(0xff00ff);
             (
                 (this.containsPointTester as THREE.Mesh)
-                    .material as THREE.MeshBasicMaterial
-            ).color.setHex(0xff00ff);
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0xff00ff);
         } else {
+            // (
+            //     (this.containsPointTester as THREE.Mesh)
+            //         .material as THREE.MeshStandardMaterial
+            // ).color.setHex(0x00ffff);
             (
                 (this.containsPointTester as THREE.Mesh)
-                    .material as THREE.MeshBasicMaterial
-            ).color.setHex(0x00ffff);
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0x00ffff);
+        }
+
+        if (
+            this.demoObjects.some((obj) =>
+                obj.DOP.intersectsSphere(new THREE.Sphere(this.intersectsSphereTester.position, this.intersectsSphereTester.geometry.parameters.radius))
+            )
+        ) {
+            // (
+            //     (this.containsPointTester as THREE.Mesh)
+            //         .material as THREE.MeshStandardMaterial
+            // ).color.setHex(0xff00ff);
+            (
+                (this.intersectsSphereTester as THREE.Mesh)
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0xff00ff);
+        } else {
+            // (
+            //     (this.containsPointTester as THREE.Mesh)
+            //         .material as THREE.MeshStandardMaterial
+            // ).color.setHex(0x00ffff);
+            (
+                (this.intersectsSphereTester as THREE.Mesh)
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0x00ffff);
+        }
+
+        // this.intersectsBoxTester.geometry.computeBoundingBox()
+        if (
+            this.demoObjects.some((obj) =>
+                // obj.DOP.intersectsBox(this.intersectsBoxTester.geometry.boundingBox)
+                obj.DOP.intersectsBox(new THREE.Box3().setFromObject(this.intersectsBoxTester))
+            )
+        ) {
+            
+            // (
+            //     (this.containsPointTester as THREE.Mesh)
+            //         .material as THREE.MeshStandardMaterial
+            // ).color.setHex(0xff00ff);
+            (
+                (this.intersectsBoxTester as THREE.Mesh)
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0xff00ff);
+        } else {
+            // (
+            //     (this.containsPointTester as THREE.Mesh)
+            //         .material as THREE.MeshStandardMaterial
+            // ).color.setHex(0x00ffff);
+            (
+                (this.intersectsBoxTester as THREE.Mesh)
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0x00ffff);
         }
     }
 
