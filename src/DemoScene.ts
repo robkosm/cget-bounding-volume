@@ -268,11 +268,11 @@ export default class DemoScene extends THREE.Scene {
     }
 
     initializeGUI() {
-        // TODO: toggle transform controls
-        const shapeFolder = this.gui.addFolder("intersection test shapes");
-        shapeFolder.add(this.containsPointTester, "visible").name("Show containsPointTester");
-        shapeFolder.add(this.intersectsSphereTester, "visible").name("Show intersectsSphereTester");    
-        shapeFolder.add(this.intersectsBoxTester, "visible").name("Show intersectsBoxTester");   
+        // // TODO: toggle transform controls
+        // const shapeFolder = this.gui.addFolder("intersection test shapes");
+        // shapeFolder.add(this.containsPointTester, "visible").name("Show containsPointTester");
+        // shapeFolder.add(this.intersectsSphereTester, "visible").name("Show intersectsSphereTester");    
+        // shapeFolder.add(this.intersectsBoxTester, "visible").name("Show intersectsBoxTester");   
     }
 
     initializeLights() {
