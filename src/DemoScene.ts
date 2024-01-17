@@ -81,7 +81,7 @@ class DOPdemoObject {
 
     addToGUI(_gui: GUI) {
         const DOPFolder = _gui.addFolder(this.name);
-        DOPFolder.add(this, "k", [6, 14, 18, 26]).onChange(() => {
+        DOPFolder.add(this, "k", [6, 8, 12, 14, 18, 20, 26]).onChange(() => {
             this.changeK(Number(this.k));
         });
         DOPFolder.add(this.DOPhelper, "visible").name("Show DOP Edges");

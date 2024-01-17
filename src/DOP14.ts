@@ -1,10 +1,27 @@
 import * as THREE from "three";
 
 const DOPnormals = {
+    // (±1, 0, 0), (0, ±1, 0), (0, 0, ±1)
     "6": [
         new THREE.Vector3(1, 0, 0),
         new THREE.Vector3(0, 1, 0),
         new THREE.Vector3(0, 0, 1),
+    ],
+    // (±1, ±1, ±1)
+    "8": [
+        new THREE.Vector3(1, 1, 1),
+        new THREE.Vector3(1, -1, 1),
+        new THREE.Vector3(1, 1, -1),
+        new THREE.Vector3(1, -1, -1),
+    ],
+    // (±1, ±1, 0), (±1, 0, ±1), (0, ±1, ±1)
+    "12": [
+        new THREE.Vector3(1, 1, 0),
+        new THREE.Vector3(1, -1, 0),
+        new THREE.Vector3(1, 0, 1),
+        new THREE.Vector3(1, 0, -1),
+        new THREE.Vector3(0, 1, 1),
+        new THREE.Vector3(0, -1, 1),
     ],
     "14": [
         new THREE.Vector3(1, 0, 0),
@@ -26,7 +43,18 @@ const DOPnormals = {
         new THREE.Vector3(1, 0, -1),
         new THREE.Vector3(0, 1, -1),
     ],
-
+    "20": [
+        new THREE.Vector3(1, 1, 1),
+        new THREE.Vector3(1, -1, 1),
+        new THREE.Vector3(1, 1, -1),
+        new THREE.Vector3(1, -1, -1),
+        new THREE.Vector3(1, 1, 0),
+        new THREE.Vector3(1, -1, 0),
+        new THREE.Vector3(1, 0, 1),
+        new THREE.Vector3(1, 0, -1),
+        new THREE.Vector3(0, 1, 1),
+        new THREE.Vector3(0, -1, 1),
+    ],
     "26": [
         new THREE.Vector3(1, 0, 0),
         new THREE.Vector3(0, 1, 0),
