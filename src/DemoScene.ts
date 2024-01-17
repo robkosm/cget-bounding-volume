@@ -115,9 +115,35 @@ export default class DemoScene extends THREE.Scene {
         // this.background = new THREE.Color(0xf1f1f1);
         this.background = new THREE.Color(0x10101a);
 
-        const gridHelper = new THREE.GridHelper(10, 10);
-        this.add(gridHelper);
+        {
+            const gridHelper = new THREE.GridHelper(
+                10,
+                100,
+                new THREE.Color(0x555566),
+                new THREE.Color(0x303040)
+            );
+            this.add(gridHelper);
+        }
+        {
+            const gridHelper = new THREE.GridHelper(
+                10,
+                10,
+                new THREE.Color(0x555566),
+                new THREE.Color(0x484858)
+            );
+            this.add(gridHelper);
+        }
 
+        this.initializeDemoObjects()
+
+        this.initializeLights()
+
+        this.initializeGUI()
+
+        callback();
+    }
+
+    initializeDemoObjects() {
         {
             const translation = new THREE.Vector3(-4, 0, 0);
             const scale = new THREE.Vector3(0.8, 0.8, 0.8);
@@ -239,7 +265,17 @@ export default class DemoScene extends THREE.Scene {
             this.intersectsBoxTester.translateZ(4);
             this.add(this.intersectsBoxTester);
         }
+    }
 
+    initializeGUI() {
+        // TODO: toggle transform controls
+        const shapeFolder = this.gui.addFolder("intersection test shapes");
+        shapeFolder.add(this.containsPointTester, "visible").name("Show containsPointTester");
+        shapeFolder.add(this.intersectsSphereTester, "visible").name("Show intersectsSphereTester");    
+        shapeFolder.add(this.intersectsBoxTester, "visible").name("Show intersectsBoxTester");   
+    }
+
+    initializeLights() {
         {
             const light = new THREE.AmbientLight(0x888888); // soft white light
             this.add(light);
@@ -256,8 +292,6 @@ export default class DemoScene extends THREE.Scene {
             light.position.set(0, -4, -2);
             this.add(light);
         }
-
-        callback();
     }
 
     update() {
@@ -290,7 +324,10 @@ export default class DemoScene extends THREE.Scene {
                 obj.DOP.intersectsSphere(
                     new THREE.Sphere(
                         this.intersectsSphereTester.position,
-                        ((this.intersectsSphereTester as THREE.Mesh).geometry as THREE.SphereGeometry).parameters.radius
+                        (
+                            (this.intersectsSphereTester as THREE.Mesh)
+                                .geometry as THREE.SphereGeometry
+                        ).parameters.radius
                     )
                 )
             )

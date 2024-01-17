@@ -402,6 +402,8 @@ export default class DOP {
         return target.copy(new THREE.Vector3(x, y, z));
     }
 
+    // approximates the kDOP as a box
+    // should generate the kDOP of the box instead
     intersectsBox(_box: THREE.Box3): boolean {
         if (this.max[0] < _box.min.x || this.min[0] > _box.max.x) return false;
         if (this.max[1] < _box.min.y || this.min[1] > _box.max.y) return false;
