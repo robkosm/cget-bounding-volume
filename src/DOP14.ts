@@ -477,7 +477,7 @@ export default class DOP {
     setFromBufferAttribute(attribute: THREE.BufferAttribute): this {
         this.makeEmpty();
 
-        for (let i = 0; i < attribute.count; i += attribute.itemSize) {
+        for (let i = 0; i < attribute.count * attribute.itemSize; i += attribute.itemSize) {
             const x = attribute.array[i + 0];
             const y = attribute.array[i + 1];
             const z = attribute.array[i + 2];
