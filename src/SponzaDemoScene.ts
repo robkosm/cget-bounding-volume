@@ -51,6 +51,7 @@ export default class SponzaDemoScene extends THREE.Scene {
             "assets/sponza/glTF/Sponza.gltf",
             // called when the resource is loaded
             (gltf) => {
+                console.log(gltf.scene)
                 gltf.scene.traverse( (o) => {
                     if (o instanceof THREE.Mesh) {
                         const dop = new DOP(26)
@@ -112,19 +113,20 @@ export default class SponzaDemoScene extends THREE.Scene {
 
     initializeLights() {
         {
-            const light = new THREE.AmbientLight(0x888888); // soft white light
+            const light = new THREE.AmbientLight(0xeeeeee); // soft white light
+            // const light = new THREE.AmbientLight(0x888888); // soft white light
             // const light = new THREE.AmbientLight(0x444444); // soft white light
             this.add(light);
         }
 
         {
-            const light = new THREE.PointLight(0xffaa44, 10);
+            const light = new THREE.PointLight(0xffaa44, 20);
             light.position.set(5, 2, 0);
             this.add(light);
         }
 
         {
-            const light = new THREE.PointLight(0xffaa44, 10);
+            const light = new THREE.PointLight(0xffaa44, 20);
             light.position.set(-5, 2, 0);
             this.add(light);
         }
