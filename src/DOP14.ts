@@ -830,8 +830,8 @@ export default class DOP {
 
             orderedPoints.sort((pointA, pointB) => {
                 return angleBetweenVectors(
-                    pointA.clone().sub(referencePoint),
                     pointB.clone().sub(referencePoint),
+                    pointA.clone().sub(referencePoint),
                     normal
                 );
             });
@@ -839,9 +839,13 @@ export default class DOP {
             return orderedPoints;
         }
 
-        uniqueSideVertices = uniqueSideVertices.map((side, idx) =>
-            orderPointsByAngle(this.normals[idx % (this.k / 2)], side)
-        );
+        uniqueSideVertices = uniqueSideVertices.map((side, idx) => {
+            const normal =
+                idx < this.k / 2
+                    ? this.normals[idx]
+                    : this.normals[idx - this.k / 2].clone().multiplyScalar(-1);
+            return orderPointsByAngle(normal, side);
+        });
 
         // test fan
         const tempTriangleArray: THREE.Vector3[] = [];
@@ -866,13 +870,6 @@ export default class DOP {
 
         const positionAttribute = new THREE.BufferAttribute(vertices, 3);
         geometry.setAttribute("position", positionAttribute);
-
-        const material = new THREE.MeshBasicMaterial({
-            color: 0xff0000,
-            side: THREE.DoubleSide,
-            transparent: true,
-            opacity: 0.5,
-        });
 
         return geometry;
     }
