@@ -525,7 +525,7 @@ export default class DOP {
         return this;
     }
 
-    getMesh(): THREE.Mesh {
+    getGeometry(): THREE.BufferGeometry {
         function getIntersectionLine(
             plane1Normal: THREE.Vector3,
             plane1Distance: number,
@@ -610,8 +610,8 @@ export default class DOP {
         const lineSegments = [];
         // for all combinations of planes
         for (let i = 0; i < this.normals.length; i++) {
-            for (let j = 0; j < this.normals.length; j++) {
-                if (i == j) continue;
+            for (let j = i + 1; j < this.normals.length; j++) {
+                // if (i == j) continue;
 
                 const l1 = getIntersectionLine(
                     this.normals[i],
@@ -641,7 +641,8 @@ export default class DOP {
                     this.max[j]
                 );
 
-                for (const l of [l1, l2, l3, l4]) {
+                for (let n = 0; n < 4; n++) {
+                    const l = [l1, l2, l3, l4][n];
                     // let minU = Number.MIN_VALUE;
                     // let maxU = Number.MAX_VALUE;
 
@@ -731,6 +732,8 @@ export default class DOP {
                         p2,
                         i,
                         j,
+                        imin: n < 2,
+                        jmin: n % 2 == 0,
                     });
                 }
             }
@@ -743,68 +746,135 @@ export default class DOP {
             sideVertices[i] = [];
         }
 
+        console.log(2 * lineSegments.length);
+
         // add with duplicates
         for (const ls of lineSegments) {
-            sideVertices[ls.i].push(ls.p1);
-            sideVertices[ls.j].push(ls.p2);
+            if (ls.imin) {
+                sideVertices[ls.i].push(ls.p1);
+                sideVertices[ls.i].push(ls.p2);
+            } else {
+                sideVertices[ls.i + this.k / 2].push(ls.p1);
+                sideVertices[ls.i + this.k / 2].push(ls.p2);
+            }
+
+            if (ls.jmin) {
+                sideVertices[ls.j].push(ls.p1);
+                sideVertices[ls.j].push(ls.p2);
+            } else {
+                sideVertices[ls.j + this.k / 2].push(ls.p1);
+                sideVertices[ls.j + this.k / 2].push(ls.p2);
+            }
         }
 
-        // remove duplicates
-        const uniqueSideVertices: THREE.Vector3[][] = sideVertices.map(
-            (side) => {
-                const minDelta = 0.001;
-                for (const side of sideVertices) {
-                    const uniqueArray: THREE.Vector3[] = [];
-                    side.forEach((vertex) => {
-                        const isDuplicate = uniqueArray.some(
-                            (uniqueVertex) =>
-                                vertex.distanceTo(uniqueVertex) < minDelta
-                        );
-
-                        // If not a duplicate, add it to the unique array
-                        if (!isDuplicate) {
-                            uniqueArray.push(vertex);
-                        }
-                    });
-
-                    return uniqueArray;
-                }
+        {
+            let count = 0;
+            for (const side of sideVertices) {
+                count += side.length;
             }
-        );
+
+            console.log("before removing duplicates " + count);
+        }
+        console.log(sideVertices);
+
+        // remove duplicates
+        const minDelta = 0.00001;
+        let uniqueSideVertices: THREE.Vector3[][] = sideVertices.map((side) => {
+            const uniqueArray: THREE.Vector3[] = [];
+            side.forEach((vertex) => {
+                const isDuplicate = uniqueArray.some(
+                    (uniqueVertex) => vertex.distanceTo(uniqueVertex) < minDelta
+                );
+
+                // If not a duplicate, add it to the unique array
+                if (!isDuplicate) {
+                    uniqueArray.push(vertex);
+                }
+            });
+
+            console.log(side, uniqueArray);
+            return uniqueArray;
+        });
+
+        {
+            let count = 0;
+            for (const side of uniqueSideVertices) {
+                count += side.length;
+            }
+
+            console.log("after removing duplicates " + count);
+        }
+
+        // let uniqueSideVertices = [...sideVertices];
 
         // order by angle
-        // for (const side of uniqueSideVertices) {
-        //     for ()
-        // }
+        function angleBetweenVectors(
+            pointA: THREE.Vector3,
+            pointB: THREE.Vector3,
+            normal: THREE.Vector3
+        ): number {
+            return Math.atan2(
+                pointB.clone().cross(pointA).dot(normal),
+                pointA.clone().dot(pointB)
+            );
+        }
 
-        // connect as triangle fan
-        // Create a BufferGeometry
+        // Function to order points on a plane by angle relative to the reference point
+        function orderPointsByAngle(
+            normal: THREE.Vector3,
+            points: THREE.Vector3[]
+        ): THREE.Vector3[] {
+            const orderedPoints = [...points];
+
+            const referencePoint = points[0];
+
+            orderedPoints.sort((pointA, pointB) => {
+                return angleBetweenVectors(
+                    pointA.clone().sub(referencePoint),
+                    pointB.clone().sub(referencePoint),
+                    normal
+                );
+            });
+
+            return orderedPoints;
+        }
+
+        uniqueSideVertices = uniqueSideVertices.map((side, idx) =>
+            orderPointsByAngle(this.normals[idx % (this.k / 2)], side)
+        );
+
+        // test fan
+        const tempTriangleArray: THREE.Vector3[] = [];
+        uniqueSideVertices.forEach((side) => {
+            for (let i = 1; i < side.length - 1; i++) {
+                tempTriangleArray.push(side[0]);
+                tempTriangleArray.push(side[i]);
+                tempTriangleArray.push(side[i + 1]);
+            }
+        });
+
+        console.log(tempTriangleArray);
         const geometry = new THREE.BufferGeometry();
 
-        // Convert the Vector3 array to a flat Float32Array
-        const vertices = new Float32Array(uniqueSideVertices.length * 3);
+        const vertices = new Float32Array(tempTriangleArray.length * 3);
 
-        uniqueSideVertices[0].forEach((vector, i) => {
-            // Set the vertices in the flat array
+        tempTriangleArray.forEach((vector, i) => {
             vertices[i * 3] = vector.x;
             vertices[i * 3 + 1] = vector.y;
             vertices[i * 3 + 2] = vector.z;
         });
 
-        // Create an attribute for the vertices
         const positionAttribute = new THREE.BufferAttribute(vertices, 3);
         geometry.setAttribute("position", positionAttribute);
 
-        // Create a material (you can replace this with your own material)
         const material = new THREE.MeshBasicMaterial({
             color: 0xff0000,
             side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.5,
         });
 
-        // Create a Mesh using the geometry and material
-        const triangleFanMesh = new THREE.Mesh(geometry, material);
-
-        return triangleFanMesh;
+        return geometry;
     }
 }
 

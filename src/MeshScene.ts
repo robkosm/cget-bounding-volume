@@ -168,7 +168,8 @@ export default class MeshScene extends THREE.Scene {
                     this.add(bunny.DOPhelper);
                     bunny.addToGUI(this.gui);
 
-                    this.add(bunny.DOP.getMesh())
+                    this.add(new THREE.LineSegments(new THREE.WireframeGeometry(bunny.DOP.getGeometry()), new THREE.LineBasicMaterial({color: 0xff0000})))
+                    this.add(new THREE.Mesh(bunny.DOP.getGeometry(), new THREE.MeshBasicMaterial({color: 0xff00ff})))
                 }
             );
         }
