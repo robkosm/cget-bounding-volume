@@ -142,8 +142,8 @@ export default class DOPHelper extends THREE.LineSegments {
         const lineSegments = [];
         // for all combinations of planes
         for (let i = 0; i < this.dop.normals.length; i++) {
-            for (let j = 0; j < this.dop.normals.length; j++) {
-                if (i == j) continue;
+            for (let j = i + 1; j < this.dop.normals.length; j++) {
+                // if (i == j) continue;
 
                 const l1 = getIntersectionLine(
                     this.dop.normals[i],
