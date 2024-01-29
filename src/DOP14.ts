@@ -808,6 +808,7 @@ export default class DOP {
         // let uniqueSideVertices = [...sideVertices];
 
         // order by angle
+        // https://stackoverflow.com/questions/5188561/signed-angle-between-two-3d-vectors-with-same-origin-within-the-same-plane
         function angleBetweenVectors(
             pointA: THREE.Vector3,
             pointB: THREE.Vector3,
