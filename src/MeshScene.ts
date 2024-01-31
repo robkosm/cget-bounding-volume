@@ -13,6 +13,8 @@ class DOPdemoObject {
     DOP: DOP;
     DOPhelper: DOPHelper;
     k: number;
+    mesh: THREE.Mesh;
+    meshSegments: THREE.LineSegments;
 
     constructor(
         _name: string,
@@ -26,6 +28,8 @@ class DOPdemoObject {
         this.k = 14;
         this.DOP = new DOP(this.k);
         this.DOPhelper = new DOPHelper(this.DOP);
+        this.mesh = new THREE.Mesh();
+        this.meshSegments = new THREE.LineSegments();
 
         _objLoader.load(
             // resource URL
@@ -51,6 +55,25 @@ class DOPdemoObject {
                     this.DOP,
                     new THREE.Color(0xffffff)
                 );
+
+                {
+                    const geometry = this.DOP.getGeometry();
+
+                    this.mesh = new THREE.Mesh(
+                        geometry,
+                        new THREE.MeshBasicMaterial({
+                            color: 0xffffff,
+                            transparent: true,
+                            opacity: 0.2,
+                        })
+                    );
+
+                    this.meshSegments = new THREE.LineSegments(
+                        new THREE.WireframeGeometry(geometry),
+                        new THREE.LineBasicMaterial({ color: 0xffffff })
+                    );
+                }
+
                 _callback(this);
             },
             // called when loading is in progresses
@@ -77,6 +100,34 @@ class DOPdemoObject {
         this.DOPhelper.parent?.attach(newDOPhelper);
         this.DOPhelper.parent?.remove(this.DOPhelper);
         this.DOPhelper = newDOPhelper;
+
+        {
+            const geometry = this.DOP.getGeometry();
+
+            const newMesh = new THREE.Mesh(
+                geometry,
+                new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                    transparent: true,
+                    opacity: 0.2,
+                })
+            );
+
+            this.mesh.add(newMesh);
+            this.mesh.parent?.attach(newMesh);
+            this.mesh.parent?.remove(this.mesh);
+            this.mesh = newMesh;
+
+            const newMeshSegments = new THREE.LineSegments(
+                new THREE.WireframeGeometry(geometry),
+                new THREE.LineBasicMaterial({ color: 0xffffff })
+            );
+
+            this.meshSegments.add(newMeshSegments);
+            this.meshSegments.parent?.attach(newMeshSegments);
+            this.meshSegments.parent?.remove(this.meshSegments);
+            this.meshSegments = newMeshSegments;
+        }
     }
 
     addToGUI(_gui: GUI) {
@@ -166,10 +217,9 @@ export default class MeshScene extends THREE.Scene {
                     this.demoObjects.push(bunny);
                     this.add(bunny.object);
                     this.add(bunny.DOPhelper);
+                    this.add(bunny.mesh);
+                    this.add(bunny.meshSegments);
                     bunny.addToGUI(this.gui);
-
-                    this.add(new THREE.LineSegments(new THREE.WireframeGeometry(bunny.DOP.getGeometry()), new THREE.LineBasicMaterial({color: 0xffffff})))
-                    this.add(new THREE.Mesh(bunny.DOP.getGeometry(), new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: .2})))
                 }
             );
         }
@@ -202,8 +252,7 @@ export default class MeshScene extends THREE.Scene {
         }
     }
 
-    update() {
-    }
+    update() {}
 
     getVertices(): THREE.Float32BufferAttribute[] {
         const buffers: THREE.Float32BufferAttribute[] = [];
