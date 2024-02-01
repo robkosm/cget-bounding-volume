@@ -51,29 +51,34 @@ export default class ChessDemoScene extends THREE.Scene {
             "assets/chess/glTF/ABeautifulGame.gltf",
             // called when the resource is loaded
             (gltf) => {
-                console.log(gltf.scene)
-                gltf.scene.traverse( (o) => {
+                console.log(gltf.scene);
+                gltf.scene.traverse((o) => {
                     if (o instanceof THREE.Mesh) {
-                        const dop = new DOP(26)
-                        dop.setFromObject(o)
-                        const dopHelper = new DOPHelper(dop)
+                        const dop = new DOP(26);
+                        dop.setFromObject(o);
+                        const dopHelper = new DOPHelper(dop);
                         // const folder = this.gui.addFolder("mesh " + Math.random().toString(36).slice(2, 5));
                         const folder = this.gui.addFolder(o.userData.name);
                         folder.add(o, "visible").name("mesh visible");
                         folder.add(dopHelper, "visible").name("helper visible");
-                        this.add(dopHelper)
+                        this.add(dopHelper);
                     } else {
-                        const dop = new DOP(26)
-                        dop.setFromObject(o)
-                        const dopHelper = new DOPHelper(dop, new THREE.Color(0xFF00ff))
-                        const folder = this.gui.addFolder("group " + Math.random().toString(36).slice(2, 5));
+                        const dop = new DOP(26);
+                        dop.setFromObject(o);
+                        const dopHelper = new DOPHelper(
+                            dop,
+                            new THREE.Color(0xff00ff)
+                        );
+                        const folder = this.gui.addFolder(
+                            "group " + Math.random().toString(36).slice(2, 5)
+                        );
                         folder.add(dopHelper, "visible").name("mesh visible");
                         folder.add(dopHelper, "visible").name("helper visible");
-                        this.add(dopHelper)
+                        this.add(dopHelper);
                     }
                 });
 
-                console.log(this)
+                console.log(this);
                 this.add(gltf.scene);
 
                 gltf.animations; // Array<THREE.AnimationClip>
@@ -88,28 +93,35 @@ export default class ChessDemoScene extends THREE.Scene {
             },
             // called when loading has errors
             function (error) {
-                console.log("An error happened");
+                throw error;
             }
         );
 
         this.initializeLights();
-
-        
 
         callback();
     }
 
     initializeGUI() {
         const folder = this.gui.addFolder("general settings");
-        const self = this
-        folder.add( { add: function(){ 
-            self.traverse(function (o) {
-                if (o instanceof THREE.Mesh || o instanceof DOPHelper) {
-                    o.visible = false
-                }
-            });
-        }}, "add").name("hide all ")
-        
+        const self = this;
+        folder
+            .add(
+                {
+                    add: function () {
+                        self.traverse(function (o) {
+                            if (
+                                o instanceof THREE.Mesh ||
+                                o instanceof DOPHelper
+                            ) {
+                                o.visible = false;
+                            }
+                        });
+                    },
+                },
+                "add"
+            )
+            .name("hide all ");
     }
 
     initializeLights() {
