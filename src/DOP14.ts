@@ -422,14 +422,22 @@ export default class DOP {
         return target.copy(new THREE.Vector3(x, y, z));
     }
 
-    // approximates the kDOP as a box
-    // should generate the kDOP of the box instead
     intersectsBox(_box: THREE.Box3): boolean {
-        if (this.max[0] < _box.min.x || this.min[0] > _box.max.x) return false;
-        if (this.max[1] < _box.min.y || this.min[1] > _box.max.y) return false;
-        if (this.max[2] < _box.min.z || this.min[2] > _box.max.z) return false;
+        const boxCorners = [
+            new THREE.Vector3(_box.min.x, _box.min.y, _box.min.z),
+            new THREE.Vector3(_box.min.x, _box.min.y, _box.max.z),
+            new THREE.Vector3(_box.min.x, _box.max.y, _box.min.z),
+            new THREE.Vector3(_box.min.x, _box.max.y, _box.max.z),
+            new THREE.Vector3(_box.max.x, _box.min.y, _box.min.z),
+            new THREE.Vector3(_box.max.x, _box.min.y, _box.max.z),
+            new THREE.Vector3(_box.max.x, _box.max.y, _box.min.z),
+            new THREE.Vector3(_box.max.x, _box.max.y, _box.max.z),
+        ];
 
-        return true;
+        const boxDOP = new DOP(this.k);
+        boxDOP.setFromPoints(boxCorners);
+
+        return this.intersectsDOP(boxDOP);
     }
 
     intersectsDOP(_DOP: DOP): boolean {
