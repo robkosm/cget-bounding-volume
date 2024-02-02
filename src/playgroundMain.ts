@@ -13,12 +13,14 @@ const camera = new THREE.PerspectiveCamera(
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 // orbitControls.enableDamping = true
 orbitControls.maxDistance = 20
 orbitControls.zoomToCursor = true
+orbitControls.maxPolarAngle = Math.PI/2 - .1
 
 const scene = new DemoScene();
 scene.initialize(sceneLoaded);

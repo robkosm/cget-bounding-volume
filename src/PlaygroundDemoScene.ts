@@ -1,6 +1,7 @@
 import * as THREE from "three";
 
 import { OBJLoader } from "three/examples/jsm/Addons.js";
+import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
 import { GUI } from "dat.gui";
 
@@ -38,9 +39,11 @@ class DOPdemoObject {
                     if (mesh instanceof THREE.Mesh) {
                         mesh.material = new THREE.MeshStandardMaterial({
                             color: 0xefd4ca,
+                            // color: 0xffa996,
                             // color: (Math.random() * 0xFFFFFF << 0),
                             roughness: 0.1,
                         });
+                        mesh.castShadow = true;
                     }
                 });
 
@@ -49,7 +52,7 @@ class DOPdemoObject {
                 this.DOP.setFromObject(object);
                 this.DOPhelper = new DOPHelper(
                     this.DOP,
-                    new THREE.Color(0xffffff)
+                    new THREE.Color(0xff00ff)
                 );
                 _callback(this);
             },
@@ -90,6 +93,7 @@ class DOPdemoObject {
 
 export default class DemoScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
+    private readonly gltfLoader = new GLTFLoader();
 
     gui: GUI;
 
@@ -113,32 +117,67 @@ export default class DemoScene extends THREE.Scene {
 
     async initialize(callback: Function) {
         // this.background = new THREE.Color(0xf1f1f1);
-        this.background = new THREE.Color(0x10101a);
+        // this.background = new THREE.Color(0x10101a);
+        this.background = new THREE.Color(0xa0a0a0);
+        this.fog = new THREE.Fog(0xa0a0a0, 10, 50);
+
+        {
+            const geometry = new THREE.PlaneGeometry(1000, 1000);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                side: THREE.DoubleSide,
+                roughness: 0.6,
+            });
+            const plane = new THREE.Mesh(geometry, material);
+            plane.rotateX(Math.PI / 2);
+            plane.receiveShadow = true;
+            this.add(plane);
+        }
+
+        // {
+        //     const geometry = new THREE.PlaneGeometry( 100, 100 );
+        //     const material = new THREE.MeshStandardMaterial( {color: 0xffffff, side: THREE.DoubleSide, roughness: .6} );
+        //     const plane = new THREE.Mesh( geometry, material );
+        //     plane.translateZ(-5)
+        //     this.add( plane );
+        // }
+
+        // {
+        //     const geometry = new THREE.PlaneGeometry( 100,5 );
+        //     const material = new THREE.MeshStandardMaterial( {color: 0xffffff, side: THREE.DoubleSide, roughness: .6} );
+        //     const plane = new THREE.Mesh( geometry, material );
+        //     plane.translateZ(-4)
+        //     plane.rotateX(-Math.PI/16)
+
+        //     this.add( plane );
+        // }
 
         {
             const gridHelper = new THREE.GridHelper(
                 10,
                 100,
-                new THREE.Color(0x555566),
-                new THREE.Color(0x303040)
+                new THREE.Color(0xeeeeee),
+                new THREE.Color(0xeeeeee)
             );
+            gridHelper.translateY(.01)
             this.add(gridHelper);
         }
         {
             const gridHelper = new THREE.GridHelper(
                 10,
                 10,
-                new THREE.Color(0x555566),
-                new THREE.Color(0x484858)
+                new THREE.Color(0xdddddd),
+                new THREE.Color(0xdddddd)
             );
+            gridHelper.translateY(.01)
             this.add(gridHelper);
         }
 
-        this.initializeDemoObjects()
+        this.initializeDemoObjects();
 
-        this.initializeLights()
+        this.initializeLights();
 
-        this.initializeGUI()
+        this.initializeGUI();
 
         callback();
     }
@@ -271,27 +310,64 @@ export default class DemoScene extends THREE.Scene {
         // // TODO: toggle transform controls
         // const shapeFolder = this.gui.addFolder("intersection test shapes");
         // shapeFolder.add(this.containsPointTester, "visible").name("Show containsPointTester");
-        // shapeFolder.add(this.intersectsSphereTester, "visible").name("Show intersectsSphereTester");    
-        // shapeFolder.add(this.intersectsBoxTester, "visible").name("Show intersectsBoxTester");   
+        // shapeFolder.add(this.intersectsSphereTester, "visible").name("Show intersectsSphereTester");
+        // shapeFolder.add(this.intersectsBoxTester, "visible").name("Show intersectsBoxTester");
     }
 
     initializeLights() {
+        // {
+        //     const light = new THREE.AmbientLight(0x888888); // soft white light
+        //     this.add(light);
+        // }
+
+        // {
+        //     const light = new THREE.DirectionalLight(0xffffee, 2);
+        //     light.position.set(0, 4, 1);
+        //     this.add(light);
+        // }
+
+        // {
+        //     const light = new THREE.DirectionalLight(0xffffee, .8);
+        //     light.position.set(2, .5, 1);
+        //     this.add(light);
+        // }
+
+        // {
+        //     const light = new THREE.DirectionalLight(0xffffee, .7);
+        //     light.position.set(-2, .5, 1);
+        //     this.add(light);
+        // }
+
+        // {
+        //     const light = new THREE.DirectionalLight(0xffffee, .8);
+        //     light.position.set(0, 1, 1);
+        //     this.add(light);
+        // }
+
         {
-            const light = new THREE.AmbientLight(0x888888); // soft white light
-            this.add(light);
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 2);
+            hemiLight.position.set(0, 100, 0);
+            this.add(hemiLight);
         }
 
         {
-            const light = new THREE.DirectionalLight(0xffffee, 1);
-            light.position.set(0, 4, 2);
-            this.add(light);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+            dirLight.position.set(0, 20, 20);
+            dirLight.castShadow = true;
+            dirLight.shadow.camera.top = 8;
+            dirLight.shadow.camera.bottom = -8;
+            dirLight.shadow.camera.left = -8;
+            dirLight.shadow.camera.right = 8;
+            dirLight.shadow.camera.near = 0.1;
+            dirLight.shadow.camera.far = 40;
+            this.add(dirLight);
         }
 
-        {
-            const light = new THREE.DirectionalLight(0x0000ff, 0.1);
-            light.position.set(0, -4, -2);
-            this.add(light);
-        }
+        // {
+        //     const light = new THREE.DirectionalLight(0x0000ff, 0.1);
+        //     light.position.set(0, -4, -2);
+        //     this.add(light);
+        // }
     }
 
     update() {
