@@ -754,7 +754,7 @@ export default class DOP {
             sideVertices[i] = [];
         }
 
-        console.log(2 * lineSegments.length);
+        // console.log(2 * lineSegments.length);
 
         // add with duplicates
         for (const ls of lineSegments) {
@@ -781,9 +781,9 @@ export default class DOP {
                 count += side.length;
             }
 
-            console.log("before removing duplicates " + count);
+            // console.log("before removing duplicates " + count);
         }
-        console.log(sideVertices);
+        // console.log(sideVertices);
 
         // remove duplicates
         const minDelta = 0.00001;
@@ -800,7 +800,7 @@ export default class DOP {
                 }
             });
 
-            console.log(side, uniqueArray);
+            // console.log(side, uniqueArray);
             return uniqueArray;
         });
 
@@ -810,7 +810,7 @@ export default class DOP {
                 count += side.length;
             }
 
-            console.log("after removing duplicates " + count);
+            // console.log("after removing duplicates " + count);
         }
 
         // let uniqueSideVertices = [...sideVertices];
@@ -866,7 +866,7 @@ export default class DOP {
             }
         });
 
-        console.log(tempTriangleArray);
+        // console.log(tempTriangleArray);
         const geometry = new THREE.BufferGeometry();
 
         const vertices = new Float32Array(tempTriangleArray.length * 3);
