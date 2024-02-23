@@ -73,7 +73,7 @@ class DOPdemoObject {
         this.DOP = new DOP(Number(this.k));
         this.DOP.setFromObject(this.object);
 
-        const newDOPhelper = new DOPHelper(this.DOP, new THREE.Color(0xffffff));
+        const newDOPhelper = new DOPHelper(this.DOP, new THREE.Color(0xff00ff));
 
         // replace line rendered mesh
         this.DOPhelper.add(newDOPhelper);
