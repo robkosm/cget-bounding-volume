@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 
-const PhysicsDemo: React.FC = () => {
+const PlaygroundDemo: React.FC = () => {
     useEffect(() => {
         // This code will be executed after the component is mounted
-        import("../scripts/physicsMain.ts")
+        import("../scripts/playgroundMain.ts")
             .then((module) => {
                 // Access code from the imported module
                 // This code will be executed when the module is imported
@@ -16,4 +16,4 @@ const PhysicsDemo: React.FC = () => {
     return <div>{/* Your component content */}</div>;
 };
 
-export default PhysicsDemo;
+export default PlaygroundDemo;

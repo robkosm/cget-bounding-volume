@@ -5,8 +5,8 @@ import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
 import { GUI } from "dat.gui";
 
-import DOPHelper from "../pages/DOPHelper";
-import DOP from "../pages/DOP14";
+import DOPHelper from "./DOPHelper";
+import DOP from "./DOP14";
 
 class DOPdemoObject {
     name: string;

@@ -12,12 +12,12 @@ const camera = new THREE.PerspectiveCamera(
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+document.getElementById("root")?.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 // orbitControls.enableDamping = true
-orbitControls.maxDistance = 20
-orbitControls.zoomToCursor = true
+orbitControls.maxDistance = 20;
+orbitControls.zoomToCursor = true;
 
 const scene = new PhysicsScene();
 await scene.initialize(sceneLoaded);
@@ -35,7 +35,7 @@ function sceneLoaded() {
 
 function animate() {
     orbitControls.update();
-    scene.update(renderer.info.render.frame );
+    scene.update(renderer.info.render.frame);
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
 }

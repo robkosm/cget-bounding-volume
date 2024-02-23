@@ -3,10 +3,14 @@ import "./Nav.css";
 
 function Nav() {
     return (
-        <nav>
-            <Link to={"./physics"} className="bg-slate-800	">
-                PhysicsDemo
-            </Link>
+        <nav className="bg-slate-800">
+            <Link to={"./"}>Main Menu</Link>
+
+            <Link to={"./playground"}>Playground Demo</Link>
+
+            <Link to={"./sponza"}>Sponza Demo</Link>
+
+            <Link to={"./physics"}>Physics Demo</Link>
         </nav>
     );
 }

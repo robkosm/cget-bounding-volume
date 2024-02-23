@@ -4,8 +4,8 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 import { GUI } from "dat.gui";
 
-import DOPHelper from "../pages/DOPHelper";
-import DOP from "../pages/DOP14";
+import DOPHelper from "./DOPHelper";
+import DOP from "./DOP14";
 
 export default class SponzaDemoScene extends THREE.Scene {
     private readonly gltfLoader = new GLTFLoader();
