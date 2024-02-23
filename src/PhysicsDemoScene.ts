@@ -229,7 +229,8 @@ export default class PhysicsScene extends THREE.Scene {
             mass: 10,
         });
 
-        const rawVerts = demoObject.mesh.geometry.attributes.position.array;
+        // const rawVerts = demoObject.mesh.geometry.attributes.position.array;
+        const rawVerts = demoObject.object.children[0].geometry.attributes.position.array;
 
         const verts = [],
             faces = [];
