@@ -4,7 +4,9 @@ import "./Nav.css";
 function Nav() {
     return (
         <nav>
-            <Link to={"./physics"}>PhysicsDemo</Link>
+            <Link to={"./physics"} className="bg-slate-800	">
+                PhysicsDemo
+            </Link>
         </nav>
     );
 }
