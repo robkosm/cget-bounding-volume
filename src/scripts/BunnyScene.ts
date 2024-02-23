@@ -5,8 +5,8 @@ import { MTLLoader } from "three/examples/jsm/Addons.js";
 
 import { GUI } from "dat.gui";
 
-import DOPHelper from "./DOPHelper";
-import DOP from "./DOP14";
+import DOPHelper from "../pages/DOPHelper";
+import DOP from "../pages/DOP14";
 
 export default class DemoScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
@@ -77,18 +77,16 @@ export default class DemoScene extends THREE.Scene {
             // console.log(this.bunnyDOP);
 
             // console.log(this.k, this.bunny);
-            
 
             const newBunnyHelper = new DOPHelper(this.bunnyDOP);
 
-            bunnyHelper.add( newBunnyHelper );
+            bunnyHelper.add(newBunnyHelper);
 
-            bunnyHelper.parent?.attach(newBunnyHelper );
+            bunnyHelper.parent?.attach(newBunnyHelper);
 
-            bunnyHelper.parent?.remove( bunnyHelper )
+            bunnyHelper.parent?.remove(bunnyHelper);
 
-            bunnyHelper = newBunnyHelper
-            
+            bunnyHelper = newBunnyHelper;
         });
         DOPFolder.add(bunnyHelper, "visible").name("Show Edges");
         DOPFolder.add(centerSphere, "visible").name("Show Center Point");

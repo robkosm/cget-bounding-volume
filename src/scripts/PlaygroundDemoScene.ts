@@ -5,8 +5,8 @@ import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
 import { GUI } from "dat.gui";
 
-import DOPHelper from "./DOPHelper";
-import DOP from "./DOP14";
+import DOPHelper from "../pages/DOPHelper";
+import DOP from "../pages/DOP14";
 
 class DOPdemoObject {
     name: string;
@@ -159,7 +159,7 @@ export default class DemoScene extends THREE.Scene {
                 new THREE.Color(0xeeeeee),
                 new THREE.Color(0xeeeeee)
             );
-            gridHelper.translateY(.01)
+            gridHelper.translateY(0.01);
             this.add(gridHelper);
         }
         {
@@ -169,7 +169,7 @@ export default class DemoScene extends THREE.Scene {
                 new THREE.Color(0xdddddd),
                 new THREE.Color(0xdddddd)
             );
-            gridHelper.translateY(.01)
+            gridHelper.translateY(0.01);
             this.add(gridHelper);
         }
 
