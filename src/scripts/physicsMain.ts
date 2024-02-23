@@ -18,6 +18,7 @@ const orbitControls = new OrbitControls(camera, renderer.domElement);
 // orbitControls.enableDamping = true
 orbitControls.maxDistance = 20;
 orbitControls.zoomToCursor = true;
+orbitControls.maxPolarAngle = Math.PI / 2 - 0.1;
 
 const scene = new PhysicsScene();
 await scene.initialize(sceneLoaded);

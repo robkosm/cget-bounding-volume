@@ -48,7 +48,7 @@ class DOPdemoObject {
         this.object.applyMatrix4(_transform);
 
         this.DOP.setFromObject(this.object);
-        this.DOPhelper = new DOPHelper(this.DOP, new THREE.Color(0xffffff));
+        this.DOPhelper = new DOPHelper(this.DOP, new THREE.Color(0xff00ff));
 
         {
             const geometry = this.DOP.getGeometry();
@@ -64,7 +64,7 @@ class DOPdemoObject {
 
             this.meshSegments = new THREE.LineSegments(
                 new THREE.WireframeGeometry(geometry),
-                new THREE.LineBasicMaterial({ color: 0xffffff })
+                new THREE.LineBasicMaterial({ color: 0xff00ff })
             );
 
             this.object.attach(this.mesh);
@@ -162,24 +162,40 @@ export default class PhysicsScene extends THREE.Scene {
 
     async initialize(callback: Function) {
         // this.background = new THREE.Color(0xf1f1f1);
-        this.background = new THREE.Color(0x10101a);
+        this.background = new THREE.Color(0xa0a0a0);
+        this.fog = new THREE.Fog(0xa0a0a0, 10, 50);
+
+        {
+            const geometry = new THREE.PlaneGeometry(1000, 1000);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                side: THREE.DoubleSide,
+                roughness: 0.6,
+            });
+            const plane = new THREE.Mesh(geometry, material);
+            plane.rotateX(Math.PI / 2);
+            plane.receiveShadow = true;
+            this.add(plane);
+        }
 
         {
             const gridHelper = new THREE.GridHelper(
                 10,
                 100,
-                new THREE.Color(0x555566),
-                new THREE.Color(0x303040)
+                new THREE.Color(0xeeeeee),
+                new THREE.Color(0xeeeeee)
             );
+            gridHelper.translateY(0.01);
             this.add(gridHelper);
         }
         {
             const gridHelper = new THREE.GridHelper(
                 10,
                 10,
-                new THREE.Color(0x555566),
-                new THREE.Color(0x484858)
+                new THREE.Color(0xdddddd),
+                new THREE.Color(0xdddddd)
             );
+            gridHelper.translateY(0.01);
             this.add(gridHelper);
         }
 
@@ -321,21 +337,40 @@ export default class PhysicsScene extends THREE.Scene {
 
     initializeLights() {
         {
-            const light = new THREE.AmbientLight(0x888888); // soft white light
-            this.add(light);
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 2);
+            hemiLight.position.set(0, 100, 0);
+            this.add(hemiLight);
         }
 
         {
-            const light = new THREE.DirectionalLight(0xffffee, 1);
-            light.position.set(0, 4, 2);
-            this.add(light);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+            dirLight.position.set(0, 20, 20);
+            dirLight.castShadow = true;
+            dirLight.shadow.camera.top = 8;
+            dirLight.shadow.camera.bottom = -8;
+            dirLight.shadow.camera.left = -8;
+            dirLight.shadow.camera.right = 8;
+            dirLight.shadow.camera.near = 0.1;
+            dirLight.shadow.camera.far = 40;
+            this.add(dirLight);
         }
 
-        {
-            const light = new THREE.DirectionalLight(0x0000ff, 0.1);
-            light.position.set(0, -4, -2);
-            this.add(light);
-        }
+        // {
+        //     const light = new THREE.AmbientLight(0x888888); // soft white light
+        //     this.add(light);
+        // }
+
+        // {
+        //     const light = new THREE.DirectionalLight(0xffffee, 1);
+        //     light.position.set(0, 4, 2);
+        //     this.add(light);
+        // }
+
+        // {
+        //     const light = new THREE.DirectionalLight(0x0000ff, 0.1);
+        //     light.position.set(0, -4, -2);
+        //     this.add(light);
+        // }
     }
 
     async update(frameCount: number) {
