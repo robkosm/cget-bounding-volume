@@ -161,6 +161,21 @@ export default class PhysicsScene extends THREE.Scene {
     }
 
     async initialize(callback: Function) {
+        this.initializeWorld();
+
+        this.initializeCannon();
+
+        await this.addOneMonkey();
+        // await this.addOneMonkey();
+
+        this.initializeLights();
+
+        this.initializeGUI();
+
+        callback();
+    }
+
+    initializeWorld() {
         // this.background = new THREE.Color(0xf1f1f1);
         this.background = new THREE.Color(0xa0a0a0);
         this.fog = new THREE.Fog(0xa0a0a0, 10, 50);
@@ -198,16 +213,6 @@ export default class PhysicsScene extends THREE.Scene {
             gridHelper.translateY(0.01);
             this.add(gridHelper);
         }
-
-        await this.initializeDemoObjects();
-
-        this.initializeCannon();
-
-        this.initializeLights();
-
-        this.initializeGUI();
-
-        callback();
     }
 
     initializeCannon() {
@@ -224,16 +229,6 @@ export default class PhysicsScene extends THREE.Scene {
             -Math.PI / 2
         );
         this.world.addBody(groundBody);
-
-        // const shape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));
-        // const mass = 1;
-        // this.body = new CANNON.Body({
-        //     mass: 1,
-        // });
-        // this.body.addShape(shape);
-        // this.body.angularVelocity.set(0, 10, 0);
-        // this.body.angularDamping = 0.5;
-        // this.world.addBody(this.body);
 
         for (const demoObject of this.demoObjects) {
             this.addDemoObjectToPhysics(demoObject);
@@ -268,11 +263,6 @@ export default class PhysicsScene extends THREE.Scene {
             }
             faces.push([j, j + 1, j + 2]);
         }
-
-        // console.log(verts, faces)
-
-        // Get offset
-        // offset = new CANNON.Vec3(0, 0, 0);
 
         // Construct polyhedron
         const monkeyPart = new CANNON.ConvexPolyhedron(verts, faces);
@@ -314,26 +304,19 @@ export default class PhysicsScene extends THREE.Scene {
         return monkey;
     }
 
-    async initializeDemoObjects() {
-        {
-            const monkey = await this.getMonkey();
+    async addOneMonkey() {
+        const monkey = await this.getMonkey();
 
-            this.demoObjects.push(monkey);
-            this.add(monkey.object);
-            // this.add(monkey.DOPhelper);
-            // this.add(monkey.mesh);
-            // this.add(monkey.meshSegments);
-            monkey.addToGUI(this.gui);
-        }
+        this.demoObjects.push(monkey);
+        this.add(monkey.object);
+        this.addDemoObjectToPhysics(monkey);
+        // this.add(monkey.DOPhelper);
+        // this.add(monkey.mesh);
+        // this.add(monkey.meshSegments);
+        // monkey.addToGUI(this.gui);
     }
 
-    initializeGUI() {
-        // // TODO: toggle transform controls
-        // const shapeFolder = this.gui.addFolder("intersection test shapes");
-        // shapeFolder.add(this.containsPointTester, "visible").name("Show containsPointTester");
-        // shapeFolder.add(this.intersectsSphereTester, "visible").name("Show intersectsSphereTester");
-        // shapeFolder.add(this.intersectsBoxTester, "visible").name("Show intersectsBoxTester");
-    }
+    initializeGUI() {}
 
     initializeLights() {
         {
@@ -374,6 +357,11 @@ export default class PhysicsScene extends THREE.Scene {
     }
 
     async update(frameCount: number) {
+        // 5 sek
+        // if (frameCount % 300 == 0) {
+        //     this.addOneMonkey();
+        // }
+
         const timeStep = 1 / 60; // change this
         this.world.step(timeStep);
 
@@ -383,7 +371,6 @@ export default class PhysicsScene extends THREE.Scene {
             const body = this.bodies[i];
 
             if (body == undefined) {
-                console.log("not initialised yet");
                 continue;
             }
 
