@@ -1,7 +1,6 @@
 import * as THREE from "three";
 
 import { OBJLoader } from "three/examples/jsm/Addons.js";
-import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
 import { GUI } from "dat.gui";
 
@@ -93,7 +92,6 @@ class DOPdemoObject {
 
 export default class DemoScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
-    private readonly gltfLoader = new GLTFLoader();
 
     gui: GUI;
 

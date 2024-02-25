@@ -1,7 +1,6 @@
 // import './style.css'
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { TransformControls } from "three/addons/controls/TransformControls.js";
 import MeshScene from "./MeshScene";
 
 const camera = new THREE.PerspectiveCamera(
@@ -17,8 +16,8 @@ document.body.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 // orbitControls.enableDamping = true
-orbitControls.maxDistance = 20
-orbitControls.zoomToCursor = true
+orbitControls.maxDistance = 20;
+orbitControls.zoomToCursor = true;
 
 const scene = new MeshScene();
 scene.initialize(sceneLoaded);

@@ -22,7 +22,7 @@ export default class DemoScene extends THREE.Scene {
         this.bunnyDOP = new DOP(26);
     }
 
-    async initialize(callback: Function) {
+    async initialize(callback: () => void) {
         const targetMtl = await this.mtlLoader.loadAsync("assets/targetA.mtl");
         targetMtl.preload();
 

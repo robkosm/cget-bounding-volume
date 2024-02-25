@@ -94,7 +94,7 @@ class DOPdemoObject {
         return new DOPdemoObject(_name, _url, _objLoader, _transform, object);
     }
 
-    changeK(_newK: Number) {
+    changeK(_newK: number) {
         this.DOP = new DOP(Number(this.k));
         this.DOP.setFromObject(this.object);
 
@@ -149,7 +149,6 @@ export default class PhysicsScene extends THREE.Scene {
 
     world: CANNON.World;
     bodies: CANNON.Body[];
-    collisionMesh: THREE.Mesh;
 
     k: number;
 
@@ -158,9 +157,10 @@ export default class PhysicsScene extends THREE.Scene {
         this.k = 26;
         this.gui = new GUI({ closed: true });
         this.bodies = [];
+        this.world = new CANNON.World();
     }
 
-    async initialize(callback: Function) {
+    async initialize(callback: () => void) {
         this.initializeWorld();
 
         this.initializeCannon();
@@ -356,7 +356,7 @@ export default class PhysicsScene extends THREE.Scene {
         // }
     }
 
-    async update(frameCount: number) {
+    async update(_frameCount: number) {
         // 5 sek
         // if (frameCount % 300 == 0) {
         //     this.addOneMonkey();
