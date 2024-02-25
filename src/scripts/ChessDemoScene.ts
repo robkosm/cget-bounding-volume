@@ -20,7 +20,7 @@ export default class ChessDemoScene extends THREE.Scene {
         this.gui = new GUI();
     }
 
-    async initialize(callback: Function) {
+    async initialize(callback: () => void) {
         // this.background = new THREE.Color(0xf1f1f1);
         this.background = new THREE.Color(0x10101a);
 

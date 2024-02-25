@@ -61,7 +61,7 @@ window.addEventListener("resize", resize);
 
 resize();
 
-export function mount(container) {
+export function mount(container: Node) {
     if (container) {
         container.insertBefore(renderer.domElement, container.firstChild);
         resize();
