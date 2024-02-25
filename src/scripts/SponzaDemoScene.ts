@@ -17,7 +17,7 @@ export default class SponzaDemoScene extends THREE.Scene {
     constructor() {
         super();
         this.k = 26;
-        this.gui = new GUI();
+        this.gui = new GUI({ closed: true });
     }
 
     async initialize(callback: Function) {

@@ -156,7 +156,7 @@ export default class PhysicsScene extends THREE.Scene {
     constructor() {
         super();
         this.k = 26;
-        this.gui = new GUI();
+        this.gui = new GUI({ closed: true });
         this.bodies = [];
     }
 

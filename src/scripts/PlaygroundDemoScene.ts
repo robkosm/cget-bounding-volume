@@ -108,7 +108,7 @@ export default class DemoScene extends THREE.Scene {
     constructor() {
         super();
         this.k = 26;
-        this.gui = new GUI();
+        this.gui = new GUI({ closed: true });
 
         this.containsPointTester = new THREE.Object3D();
         this.intersectsBoxTester = new THREE.Object3D();
