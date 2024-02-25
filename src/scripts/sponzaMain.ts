@@ -11,8 +11,9 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+// renderer.setSize(window.innerWidth, window.innerHeight);
+// document.body.appendChild(renderer.domElement);
+renderer.setAnimationLoop(animate);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 // orbitControls.enableDamping = true
@@ -23,8 +24,8 @@ const scene = new SponzaDemoScene();
 scene.initialize(sceneLoaded);
 
 camera.position.z = 0;
-camera.position.y = .5;
-camera.position.x = 4
+camera.position.y = 0.5;
+camera.position.x = 4;
 
 orbitControls.update();
 
@@ -35,6 +36,33 @@ function sceneLoaded() {
 function animate() {
     orbitControls.update();
     scene.update();
-    requestAnimationFrame(animate);
+    // requestAnimationFrame(animate);
     renderer.render(scene, camera);
+}
+
+function resize() {
+    const container = renderer.domElement.parentNode;
+
+    if (container) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        renderer.setSize(width, height);
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
+}
+
+window.addEventListener("resize", resize);
+
+resize();
+
+export function mount(container) {
+    if (container) {
+        container.insertBefore(renderer.domElement, container.firstChild);
+        resize();
+    } else {
+        renderer.domElement.remove();
+    }
 }

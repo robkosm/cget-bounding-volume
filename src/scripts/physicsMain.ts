@@ -11,8 +11,9 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById("root")?.appendChild(renderer.domElement);
+// renderer.setSize(window.innerWidth, window.innerHeight);
+// document.getElementById("root")?.appendChild(renderer.domElement);
+renderer.setAnimationLoop(animate);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 // orbitControls.enableDamping = true
@@ -22,6 +23,7 @@ orbitControls.maxPolarAngle = Math.PI / 2 - 0.1;
 
 const scene = new PhysicsScene();
 await scene.initialize(sceneLoaded);
+console.log(scene);
 
 camera.position.z = 8;
 camera.position.y = 5;
@@ -37,6 +39,33 @@ function sceneLoaded() {
 function animate() {
     orbitControls.update();
     scene.update(renderer.info.render.frame);
-    requestAnimationFrame(animate);
+    // requestAnimationFrame(animate);
     renderer.render(scene, camera);
+}
+
+function resize() {
+    const container = renderer.domElement.parentNode;
+
+    if (container) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        renderer.setSize(width, height);
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
+}
+
+window.addEventListener("resize", resize);
+
+resize();
+
+export function mount(container) {
+    if (container) {
+        container.insertBefore(renderer.domElement, container.firstChild);
+        resize();
+    } else {
+        renderer.domElement.remove();
+    }
 }
