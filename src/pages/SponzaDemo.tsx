@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { mount } from "../scripts/sponzaMain";
 
 const SponzaDemo: React.FC = () => {
@@ -16,7 +16,18 @@ const SponzaDemo: React.FC = () => {
 
     // return <div>{/* Your component content */}</div>;
 
-    const containerRef = useCallback(mount, []);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const mountCallback = useCallback(() => {
+        if (containerRef.current) {
+            mount(containerRef.current);
+        }
+    }, []);
+
+    useEffect(() => {
+        mountCallback();
+    }, [mountCallback]);
+
     return (
         <div
             className="container"
