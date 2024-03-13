@@ -2,6 +2,11 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import RapierScene from "./RapierDemoScene";
+import Stats from "stats.js";
+
+const stats = new Stats();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom);
 
 const camera = new THREE.PerspectiveCamera(
     75,
@@ -37,10 +42,12 @@ function sceneLoaded() {
 }
 
 function animate() {
+    stats.begin();
     orbitControls.update();
     scene.update(renderer.info.render.frame);
     // requestAnimationFrame(animate);
     renderer.render(scene, camera);
+    stats.end();
 }
 
 function resize() {

@@ -17,6 +17,7 @@
     "enable3d": "^0.25.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "stats.js": "^0.17.0",
     "three": "^0.161.0",
     "vite-plugin-wasm": "^3.3.0"
   },
