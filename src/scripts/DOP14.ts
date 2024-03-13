@@ -422,6 +422,49 @@ export default class DOP {
         return target.copy(new THREE.Vector3(x, y, z));
     }
 
+    intersectRay(_ray: THREE.Ray, target: THREE.Vector3): THREE.Vector3 | null {
+        let t_min = Number.NEGATIVE_INFINITY;
+        let t_max = Number.POSITIVE_INFINITY;
+
+        for (let i = 0; i < this.normals.length; i++) {
+            const normal = this.normals[i];
+
+            const minPlane = new THREE.Plane(normal, this.min[i]);
+            const maxPlane = new THREE.Plane(normal, this.max[i]);
+
+            const minIntersection = new THREE.Vector3();
+            const maxIntersection = new THREE.Vector3();
+
+            _ray.intersectPlane(minPlane, minIntersection);
+            _ray.intersectPlane(maxPlane, maxIntersection);
+
+            const t1 = minIntersection.distanceTo(_ray.origin);
+            const t2 = maxIntersection.distanceTo(_ray.origin);
+
+            let t_closer, t_further;
+            if (t1 < t2) {
+                t_closer = t1;
+                t_further = t2;
+            } else {
+                t_closer = t2;
+                t_further = t1;
+            }
+
+            t_min = Math.max(t_min, t_closer);
+            t_max = Math.min(t_max, t_further);
+        }
+
+        if (t_min > t_max) {
+            return null;
+        }
+
+        return _ray.at(t_min, target);
+    }
+
+    intersectsRay(_ray: THREE.Ray): boolean {
+        return this.intersectRay(_ray, new THREE.Vector3()) !== null;
+    }
+
     intersectsBox(_box: THREE.Box3): boolean {
         const boxCorners = [
             new THREE.Vector3(_box.min.x, _box.min.y, _box.min.z),

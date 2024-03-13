@@ -58,6 +58,8 @@ function sceneLoaded() {
     createTansformControl(scene.containsPointTester);
     createTansformControl(scene.intersectsSphereTester);
     createTansformControl(scene.intersectsBoxTester);
+    createTansformControl(scene.intersectsRayTesterStart);
+    createTansformControl(scene.intersectsRayTesterEnd);
 
     animate();
 }

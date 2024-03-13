@@ -100,6 +100,8 @@ export default class DemoScene extends THREE.Scene {
     containsPointTester: THREE.Object3D;
     intersectsBoxTester: THREE.Object3D;
     intersectsSphereTester: THREE.Object3D;
+    intersectsRayTesterStart: THREE.Object3D;
+    intersectsRayTesterEnd: THREE.Object3D;
 
     k: number;
 
@@ -111,6 +113,8 @@ export default class DemoScene extends THREE.Scene {
         this.containsPointTester = new THREE.Object3D();
         this.intersectsBoxTester = new THREE.Object3D();
         this.intersectsSphereTester = new THREE.Object3D();
+        this.intersectsRayTesterStart = new THREE.Object3D();
+        this.intersectsRayTesterEnd = new THREE.Object3D();
     }
 
     async initialize(callback: Function) {
@@ -302,6 +306,26 @@ export default class DemoScene extends THREE.Scene {
             this.intersectsBoxTester.translateZ(4);
             this.add(this.intersectsBoxTester);
         }
+
+        {
+            const geometry = new THREE.SphereGeometry(0.1, 32, 16);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x00ffff,
+                emissive: 0x00ffff,
+                emissiveIntensity: 0.5,
+            });
+            this.intersectsRayTesterStart = new THREE.Mesh(geometry, material);
+            this.intersectsRayTesterStart.translateX(3);
+            this.intersectsRayTesterStart.translateY(0.5);
+            this.intersectsRayTesterStart.translateZ(3.5);
+            this.add(this.intersectsRayTesterStart);
+
+            this.intersectsRayTesterEnd = new THREE.Mesh(geometry, material);
+            this.intersectsRayTesterEnd.translateX(4);
+            this.intersectsRayTesterEnd.translateY(0.5);
+            this.intersectsRayTesterEnd.translateZ(4.5);
+            this.add(this.intersectsRayTesterEnd);
+        }
     }
 
     initializeGUI() {
@@ -449,6 +473,38 @@ export default class DemoScene extends THREE.Scene {
             // ).color.setHex(0x00ffff);
             (
                 (this.intersectsBoxTester as THREE.Mesh)
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0x00ffff);
+        }
+
+        if (
+            this.demoObjects.some((obj) =>
+                // obj.DOP.intersectsBox(this.intersectsBoxTester.geometry.boundingBox)
+                obj.DOP.intersectsRay(
+                    new THREE.Ray(
+                        this.intersectsRayTesterStart.position,
+                        this.intersectsRayTesterEnd.position
+                            .clone()
+                            .sub(this.intersectsRayTesterStart.position)
+                    )
+                )
+            )
+        ) {
+            (
+                (this.intersectsRayTesterStart as THREE.Mesh)
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0xff00ff);
+            (
+                (this.intersectsRayTesterEnd as THREE.Mesh)
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0xff00ff);
+        } else {
+            (
+                (this.intersectsRayTesterStart as THREE.Mesh)
+                    .material as THREE.MeshStandardMaterial
+            ).emissive.setHex(0x00ffff);
+            (
+                (this.intersectsRayTesterEnd as THREE.Mesh)
                     .material as THREE.MeshStandardMaterial
             ).emissive.setHex(0x00ffff);
         }
