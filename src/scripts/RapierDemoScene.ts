@@ -4,10 +4,13 @@ import { OBJLoader } from "three/examples/jsm/Addons.js";
 
 import { GUI } from "dat.gui";
 
-import * as CANNON from "cannon";
+// import wasm from "vite-plugin-wasm";
+
+const RAPIER = await import("@dimforge/rapier3d");
 
 import DOPHelper from "./DOPHelper";
 import DOP from "./DOP14";
+import { iridescenceThickness } from "three/examples/jsm/nodes/Nodes.js";
 
 class DOPdemoObject {
     name: string;
@@ -67,8 +70,8 @@ class DOPdemoObject {
                 new THREE.LineBasicMaterial({ color: 0xff00ff })
             );
 
-            this.object.attach(this.mesh);
-            this.object.attach(this.meshSegments);
+            // this.object.attach(this.mesh);
+            // this.object.attach(this.meshSegments);
         }
     }
 
@@ -140,15 +143,16 @@ class DOPdemoObject {
     }
 }
 
-export default class PhysicsScene extends THREE.Scene {
+export default class RapierScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
 
     gui: GUI;
 
     demoObjects: DOPdemoObject[] = [];
 
-    world: CANNON.World;
-    bodies: CANNON.Body[];
+    world;
+    gravity;
+    bodies;
 
     k: number;
 
@@ -157,7 +161,9 @@ export default class PhysicsScene extends THREE.Scene {
         this.k = 20;
         this.gui = new GUI({ closed: true });
         this.bodies = [];
-        this.world = new CANNON.World();
+
+        this.gravity = { x: 0.0, y: -9.81, z: 0.0 };
+        this.world = new RAPIER.World(this.gravity);
     }
 
     async initialize(callback: () => void) {
@@ -216,69 +222,61 @@ export default class PhysicsScene extends THREE.Scene {
     }
 
     initializeCannon() {
-        this.world = new CANNON.World();
-        this.world.gravity.set(0, -9.81, 0);
-        this.world.broadphase = new CANNON.NaiveBroadphase();
-        this.world.solver.iterations = 10;
-
-        const plane = new CANNON.Plane();
-        const groundBody = new CANNON.Body({ mass: 0 });
-        groundBody.addShape(plane);
-        groundBody.quaternion.setFromAxisAngle(
-            new CANNON.Vec3(1, 0, 0),
-            -Math.PI / 2
+        // Create the ground
+        const groundColliderDesc = RAPIER.ColliderDesc.cuboid(
+            100.0,
+            0.1,
+            100.0
         );
-        this.world.addBody(groundBody);
-
-        for (const demoObject of this.demoObjects) {
-            this.addDemoObjectToPhysics(demoObject);
-        }
+        this.world.createCollider(groundColliderDesc);
     }
 
     addDemoObjectToPhysics(demoObject: DOPdemoObject) {
-        const monkeyBody = new CANNON.Body({
-            mass: 10,
-        });
-
-        const rawVerts = demoObject.mesh.geometry.attributes.position.array;
-        // const rawVerts =
-        //     demoObject.object.children[0].geometry.attributes.position.array;
-
-        const verts = [],
-            faces = [];
-
-        // Get vertices
-        for (let j = 0; j < rawVerts.length; j += 3) {
-            verts.push(
-                new CANNON.Vec3(rawVerts[j], rawVerts[j + 1], rawVerts[j + 2])
-            );
+        const indices: Uint32Array[] = [];
+        for (
+            let i = 0;
+            i <
+            demoObject.object.children[0].geometry.getAttribute("position")
+                .array.length /
+                3;
+            i++
+        ) {
+            indices.push(i);
         }
 
-        // Get faces
-        for (let j = 0; j < rawVerts.length / 3; j += 3) {
-            // hack because of mesh generation mistake
-            // if ([81].includes(j)) {
-            //     faces.push([j + 1, j, j + 2]);
-            //     continue;
-            // }
-            faces.push([j, j + 1, j + 2]);
-        }
-
-        // Construct polyhedron
-        const monkeyPart = new CANNON.ConvexPolyhedron(verts, faces);
-
-        // Add to    compound
-        monkeyBody.addShape(monkeyPart);
-        monkeyBody.position = new CANNON.Vec3(0, 10, 0);
-        monkeyBody.angularVelocity.set(
-            Math.random() * 1,
-            Math.random() * 1,
-            Math.random() * 1
+        const cp = new RAPIER.ConvexPolyhedron(
+            demoObject.mesh.geometry.getAttribute("position").array
         );
-        monkeyBody.angularDamping = 0.1;
-        this.world.addBody(monkeyBody);
 
-        this.bodies.push(monkeyBody);
+        // const tm = new RAPIER.TriMesh(
+        //     demoObject.object.children[0].geometry.getAttribute(
+        //         "position"
+        //     ).array,
+        //     indices
+        // );
+
+        // Create a dynamic rigid-body.
+        const rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(
+            0.0,
+            10.0,
+            0.0
+        );
+        const rigidBody = this.world.createRigidBody(rigidBodyDesc);
+        rigidBody.addTorque(
+            new RAPIER.Vector3(
+                Math.random() * 20 - 10,
+                Math.random() * 20 - 10,
+                Math.random() * 20 - 10
+            ),
+            true
+        );
+
+        // Create a cuboid collider attached to the dynamic rigidBody.
+        // const colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
+        const colliderDesc = new RAPIER.ColliderDesc(cp);
+        const collider = this.world.createCollider(colliderDesc, rigidBody);
+
+        this.bodies.push(rigidBody);
     }
 
     async getMonkey() {
@@ -357,13 +355,11 @@ export default class PhysicsScene extends THREE.Scene {
     }
 
     async update(_frameCount: number) {
-        // 5 sek
-        // if (frameCount % 300 == 0) {
-        //     this.addOneMonkey();
-        // }
+        if (_frameCount > 300 && _frameCount % 20 == 0) {
+            this.addOneMonkey();
+        }
 
-        const timeStep = 1 / 60; // change this
-        this.world.step(timeStep);
+        this.world.step();
 
         // Copy coordinates from Cannon.js to Three.js
         for (let i = 0; i < this.demoObjects.length; i++) {
@@ -374,11 +370,14 @@ export default class PhysicsScene extends THREE.Scene {
                 continue;
             }
 
-            demoObject.object.position.copy(body.position);
-            demoObject.object.quaternion.copy(body.quaternion);
-        }
+            const v = body.translation();
+            const q = body.rotation();
 
-        // console.log(this.body.position);
+            demoObject.object.position.copy(new THREE.Vector3(v.x, v.y, v.z));
+            demoObject.object.quaternion.copy(
+                new THREE.Quaternion(q.x, q.y, q.z, q.w)
+            );
+        }
     }
 
     getVertices(): THREE.Float32BufferAttribute[] {

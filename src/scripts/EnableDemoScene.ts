@@ -1,13 +1,14 @@
-import * as THREE from "three";
+// import * as THREE from "three";
 
-import { OBJLoader } from "three/examples/jsm/Addons.js";
+import { AmmoPhysicsObject, OBJLoader } from "three/examples/jsm/Addons.js";
 
 import { GUI } from "dat.gui";
 
-import * as CANNON from "cannon";
-
 import DOPHelper from "./DOPHelper";
 import DOP from "./DOP14";
+import { Clock } from "three";
+import { AmmoPhysics } from "three/addons/physics/AmmoPhysics.js";
+import * as THREE from "three";
 
 class DOPdemoObject {
     name: string;
@@ -27,7 +28,7 @@ class DOPdemoObject {
     ) {
         this.name = _name;
         this.object = new THREE.Object3D();
-        this.k = 20;
+        this.k = 14;
         this.DOP = new DOP(this.k);
         this.DOPhelper = new DOPHelper(this.DOP);
         this.mesh = new THREE.Mesh();
@@ -140,37 +141,38 @@ class DOPdemoObject {
     }
 }
 
-export default class PhysicsScene extends THREE.Scene {
+export default class EnableScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
 
     gui: GUI;
 
     demoObjects: DOPdemoObject[] = [];
 
-    world: CANNON.World;
-    bodies: CANNON.Body[];
-
     k: number;
+
+    clock: THREE.Clock;
+    physics: AmmoPhysicsObject;
 
     constructor() {
         super();
-        this.k = 20;
+        this.k = 26;
         this.gui = new GUI({ closed: true });
-        this.bodies = [];
-        this.world = new CANNON.World();
+        this.clock = new THREE.Clock();
     }
 
     async initialize(callback: () => void) {
         this.initializeWorld();
 
-        this.initializeCannon();
+        await this.initializeCannon();
 
-        await this.addOneMonkey();
+        // await this.addOneMonkey();
         // await this.addOneMonkey();
 
         this.initializeLights();
 
         this.initializeGUI();
+
+        this.physics.addScene(this);
 
         callback();
     }
@@ -215,31 +217,24 @@ export default class PhysicsScene extends THREE.Scene {
         }
     }
 
-    initializeCannon() {
-        this.world = new CANNON.World();
-        this.world.gravity.set(0, -9.81, 0);
-        this.world.broadphase = new CANNON.NaiveBroadphase();
-        this.world.solver.iterations = 10;
+    async initializeCannon() {
+        this.physics = await AmmoPhysics();
 
-        const plane = new CANNON.Plane();
-        const groundBody = new CANNON.Body({ mass: 0 });
-        groundBody.addShape(plane);
-        groundBody.quaternion.setFromAxisAngle(
-            new CANNON.Vec3(1, 0, 0),
-            -Math.PI / 2
+        const floor = new THREE.Mesh(
+            new THREE.BoxGeometry(10, 5, 10),
+            new THREE.ShadowMaterial({ color: 0x444444 })
         );
-        this.world.addBody(groundBody);
+        floor.position.y = 0;
+        floor.receiveShadow = true;
+        floor.userData.physics = { mass: 0 };
+        this.add(floor);
 
-        for (const demoObject of this.demoObjects) {
-            this.addDemoObjectToPhysics(demoObject);
-        }
+        // for (const demoObject of this.demoObjects) {
+        //     this.addDemoObjectToPhysics(demoObject);
+        // }
     }
 
     addDemoObjectToPhysics(demoObject: DOPdemoObject) {
-        const monkeyBody = new CANNON.Body({
-            mass: 10,
-        });
-
         const rawVerts = demoObject.mesh.geometry.attributes.position.array;
         // const rawVerts =
         //     demoObject.object.children[0].geometry.attributes.position.array;
@@ -257,10 +252,10 @@ export default class PhysicsScene extends THREE.Scene {
         // Get faces
         for (let j = 0; j < rawVerts.length / 3; j += 3) {
             // hack because of mesh generation mistake
-            // if ([81].includes(j)) {
-            //     faces.push([j + 1, j, j + 2]);
-            //     continue;
-            // }
+            if ([81].includes(j)) {
+                faces.push([j + 1, j, j + 2]);
+                continue;
+            }
             faces.push([j, j + 1, j + 2]);
         }
 
@@ -276,9 +271,7 @@ export default class PhysicsScene extends THREE.Scene {
             Math.random() * 1
         );
         monkeyBody.angularDamping = 0.1;
-        this.world.addBody(monkeyBody);
-
-        this.bodies.push(monkeyBody);
+        // this.physics.add.existing(monkeyBody);
     }
 
     async getMonkey() {
@@ -310,6 +303,7 @@ export default class PhysicsScene extends THREE.Scene {
         this.demoObjects.push(monkey);
         this.add(monkey.object);
         this.addDemoObjectToPhysics(monkey);
+        monkey.mesh.userData.physics = { mass: 1 };
         // this.add(monkey.DOPhelper);
         // this.add(monkey.mesh);
         // this.add(monkey.meshSegments);
@@ -363,20 +357,19 @@ export default class PhysicsScene extends THREE.Scene {
         // }
 
         const timeStep = 1 / 60; // change this
-        this.world.step(timeStep);
 
         // Copy coordinates from Cannon.js to Three.js
-        for (let i = 0; i < this.demoObjects.length; i++) {
-            const demoObject = this.demoObjects[i];
-            const body = this.bodies[i];
+        // for (let i = 0; i < this.demoObjects.length; i++) {
+        // const demoObject = this.demoObjects[i];
+        // const body = this.bodies[i];
 
-            if (body == undefined) {
-                continue;
-            }
+        // if (body == undefined) {
+        //     continue;
+        // }
 
-            demoObject.object.position.copy(body.position);
-            demoObject.object.quaternion.copy(body.quaternion);
-        }
+        // demoObject.object.position.copy(body.position);
+        // demoObject.object.quaternion.copy(body.quaternion);
+        // }
 
         // console.log(this.body.position);
     }

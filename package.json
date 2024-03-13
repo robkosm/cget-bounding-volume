@@ -10,11 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dimforge/rapier3d": "^0.12.0",
+    "ammojs3": "^0.0.11",
     "cannon": "^0.6.2",
     "dat.gui": "^0.7.9",
+    "enable3d": "^0.25.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "three": "^0.161.0"
+    "three": "^0.161.0",
+    "vite-plugin-wasm": "^3.3.0"
   },
   "devDependencies": {
     "@types/cannon": "^0.1.12",

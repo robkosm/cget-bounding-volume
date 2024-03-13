@@ -5,6 +5,7 @@ import SponzaDemo from "./pages/SponzaDemo.tsx";
 import PhysicsDemo from "./pages/PhysicsDemo.tsx";
 import Menu from "./pages/Menu.tsx";
 import Layout from "./pages/Layout.tsx";
+import RapierDemo from "./pages/RapierDemo.tsx";
 
 function App() {
     return (
@@ -12,9 +13,10 @@ function App() {
             <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Menu />} />
-                    <Route path="playground" element={<PlaygroundDemo />} />
+                    {/* <Route path="playground" element={<PlaygroundDemo />} />
                     <Route path="sponza" element={<SponzaDemo />} />
-                    <Route path="physics" element={<PhysicsDemo />} />
+                    <Route path="physics" element={<PhysicsDemo />} /> */}
+                    <Route path="rapier" element={<RapierDemo />} />
                 </Route>
             </Routes>
         </BrowserRouter>

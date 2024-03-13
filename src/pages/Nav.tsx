@@ -39,6 +39,13 @@ function Nav() {
                     >
                         Physics Demo
                     </Link>
+
+                    <Link
+                        to={"./rapier"}
+                        className="block border-l pl-4 -ml-px border-transparent hover:border-slate-400 text-gray-600 hover:text-gray-900"
+                    >
+                        Rapier 3D Demo
+                    </Link>
                 </li>
             </ul>
         </nav>
