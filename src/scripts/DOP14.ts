@@ -81,8 +81,8 @@ export default class DOP {
 
     constructor(
         _k: number,
-        _min: number[] = Array(_k).fill(Number.POSITIVE_INFINITY),
-        _max: number[] = Array(_k).fill(Number.NEGATIVE_INFINITY)
+        _min: number[] = Array(_k / 2).fill(Number.POSITIVE_INFINITY),
+        _max: number[] = Array(_k / 2).fill(Number.NEGATIVE_INFINITY)
     ) {
         this.min = _min;
         this.max = _max;
