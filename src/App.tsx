@@ -6,7 +6,8 @@ import PhysicsDemo from "./pages/PhysicsDemo.tsx";
 import Menu from "./pages/Menu.tsx";
 import Layout from "./pages/Layout.tsx";
 import RapierDemo from "./pages/RapierDemo.tsx";
-import ExperimentDemo from "./pages/ExperimentDemo.tsx";
+// import ExperimentDemo from "./pages/CreationExperimentDemo.tsx";
+import ExperimentDemo from "./pages/KdopExperimentDemo.tsx";
 
 function App() {
     return (

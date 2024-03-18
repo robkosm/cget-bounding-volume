@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { mount } from "../scripts/experimentMain";
+import { mount } from "../scripts/kdopExperimentMain";
 
 const ExperimentDemo: React.FC = () => {
     // useEffect(() => {

@@ -1,7 +1,7 @@
 // import './style.css'
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import ExperimentDemoScene from "./ExperimentDemoScene";
+import ExperimentDemoScene from "./CreationExperimentDemoScene";
 
 const camera = new THREE.PerspectiveCamera(
     75,
