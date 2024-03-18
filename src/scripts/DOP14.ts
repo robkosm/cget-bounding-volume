@@ -454,6 +454,10 @@ export default class DOP {
             t_max = Math.min(t_max, t_further);
         }
 
+        if (t_max < 0) {
+            return null;
+        }
+
         if (t_min > t_max) {
             return null;
         }
