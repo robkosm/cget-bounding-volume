@@ -8,6 +8,8 @@ import DOPHelper from "./DOPHelper";
 import DOP from "./DOP14";
 import { ThreeMFLoader } from "three/examples/jsm/Addons.js";
 
+import { getKernel } from "./Kernel.js";
+
 export default class ExperimentDemoScene extends THREE.Scene {
     private readonly objLoader = new OBJLoader();
 
@@ -143,27 +145,27 @@ export default class ExperimentDemoScene extends THREE.Scene {
         const repetitions = 100;
         const kernelSize = 100000;
 
-        const kernel = [];
-
         (
             this.subject.children[0] as THREE.Mesh
         ).geometry.computeBoundingSphere();
         const bs = (this.subject.children[0] as THREE.Mesh).geometry
             .boundingSphere;
 
-        for (let i = 0; i < kernelSize; i++) {
-            const origin = new THREE.Vector3();
-            origin.randomDirection();
-            origin.multiplyScalar(2 * bs.radius);
-            origin.add(bs.center);
+        const kernel = getKernel(kernelSize, bs);
 
-            const direction = new THREE.Vector3();
-            direction.randomDirection();
+        // for (let i = 0; i < kernelSize; i++) {
+        //     const origin = new THREE.Vector3();
+        //     origin.randomDirection();
+        //     origin.multiplyScalar(2 * bs.radius);
+        //     origin.add(bs.center);
 
-            const ray = new THREE.Ray(origin, direction);
+        //     const direction = new THREE.Vector3();
+        //     direction.randomDirection();
 
-            kernel.push(ray);
-        }
+        //     const ray = new THREE.Ray(origin, direction);
+
+        //     kernel.push(ray);
+        // }
 
         // console.log(kernel);
 
