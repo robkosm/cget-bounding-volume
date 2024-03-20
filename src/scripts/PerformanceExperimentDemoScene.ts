@@ -146,6 +146,8 @@ export default class ExperimentDemoScene extends THREE.Scene {
 
         // const kernel = [];
 
+        console.log(this.subject);
+
         (
             this.subject.children[0] as THREE.Mesh
         ).geometry.computeBoundingSphere();
@@ -189,17 +191,28 @@ export default class ExperimentDemoScene extends THREE.Scene {
             console.time("14");
         }
 
+        let totalTime = 0;
         for (const ray of kernel) {
-            for (let i = 0; i < repetitions; i++) {
-                const rc = new THREE.Raycaster(ray.origin, ray.direction);
-                const intersects = [];
+            const rc = new THREE.Raycaster(ray.origin, ray.direction);
+            const intersects = [];
 
+            let recordTime = Number.POSITIVE_INFINITY;
+            for (let i = 0; i < repetitions; i++) {
+                
+                const startTime = performance.now();
                 (this.subject.children[0] as THREE.Mesh).raycast(
                     rc,
                     intersects
                 );
+                const endTime = performance.now();
+                const delta = endTime - startTime;
+                recordTime = Math.min(recordTime, delta);
             }
+
+            totalTime += recordTime;
         }
+
+        console.log(totalTime);
 
         if (VERBOSE) {
             console.timeEnd(

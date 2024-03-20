@@ -171,7 +171,7 @@ export default class ExperimentDemoScene extends THREE.Scene {
 
         const ks = [6, 8, 12, 14, 18, 20, 26];
 
-        // intersection execution time
+        // // intersection execution time
         // for (const k of ks) {
         //     const dop = new DOP(k);
         //     dop.expandByObject(this.subject, false);
@@ -202,13 +202,14 @@ export default class ExperimentDemoScene extends THREE.Scene {
             const dop = new DOP(k);
             dop.expandByObject(this.subject, false);
 
-            let kdopHitCount = 0,
-                falseHitCount = 0;
+            let positiveCount = 0,
+                falsePositiveCount = 0,
+                negativeCount = 0;
 
             for (const ray of kernel) {
                 // positive
                 if (dop.intersectsRay(ray)) {
-                    kdopHitCount++;
+                    positiveCount++;
 
                     const rc = new THREE.Raycaster(ray.origin, ray.direction);
 
@@ -218,28 +219,34 @@ export default class ExperimentDemoScene extends THREE.Scene {
                         // true positive
                     } else {
                         // false positive
-                        falseHitCount++;
+                        falsePositiveCount++;
                     }
+                } else {
+                    negativeCount++;
                 }
             }
 
             if (VERBOSE) {
                 console.log(
-                    `${k}-DOP ${((100 * falseHitCount) / kdopHitCount).toFixed(
-                        2
-                    )}% false positives in ${(
-                        (100 * kdopHitCount) /
+                    `${k}-DOP ${(
+                        (100 * falsePositiveCount) /
+                        kernelSize
+                    ).toFixed(2)}% false positives in ${(
+                        (100 * positiveCount) /
                         kernelSize
                     ).toFixed(2)}% positives. ${(
-                        (100 * falseHitCount) /
-                        kernelSize
-                    ).toFixed(2)}% false hits overall`
+                        (100 * falsePositiveCount) /
+                        (falsePositiveCount + negativeCount)
+                    ).toFixed(2)}% false positive rate overall`
                 );
             } else {
                 console.log(
-                    `${k}, ${((100 * kdopHitCount) / kernelSize).toFixed(
+                    `${k}, ${((100 * positiveCount) / kernelSize).toFixed(
                         2
-                    )}%, ${((100 * falseHitCount) / kdopHitCount).toFixed(2)}%`
+                    )}%, ${(
+                        (100 * falsePositiveCount) /
+                        (falsePositiveCount + negativeCount)
+                    ).toFixed(2)}%`
                 );
             }
         }

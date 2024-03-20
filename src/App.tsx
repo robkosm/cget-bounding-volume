@@ -7,8 +7,8 @@ import Menu from "./pages/Menu.tsx";
 import Layout from "./pages/Layout.tsx";
 import RapierDemo from "./pages/RapierDemo.tsx";
 // import ExperimentDemo from "./pages/CreationExperimentDemo.tsx";
-import ExperimentDemo from "./pages/KdopExperimentDemo.tsx";
-// import ExperimentDemo from "./pages/CreationExperimentDemo.tsx";
+// import ExperimentDemo from "./pages/KdopExperimentDemo.tsx";
+import ExperimentDemo from "./pages/PerformanceExperimentDemo.tsx";
 
 function App() {
     return (
@@ -19,8 +19,8 @@ function App() {
                     {/* <Route path="playground" element={<PlaygroundDemo />} /> */}
                     {/* <Route path="sponza" element={<SponzaDemo />} /> */}
                     {/* <Route path="physics" element={<PhysicsDemo />} /> */}
-                    {/* <Route path="rapier" element={<RapierDemo />} /> */}
-                    <Route path="experiment" element={<ExperimentDemo />} />
+                    <Route path="rapier" element={<RapierDemo />} />
+                    {/* <Route path="experiment" element={<ExperimentDemo />} /> */}
                 </Route>
             </Routes>
         </BrowserRouter>

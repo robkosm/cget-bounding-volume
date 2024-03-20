@@ -138,7 +138,7 @@ export default class ExperimentDemoScene extends THREE.Scene {
 
         console.log("starting experiments");
 
-        const repetitions = 1000;
+        const repetitions = 10000;
 
         console.time(
             `BufferGeometry Bounding Sphere Creation Time for ${repetitions} repetitions`
@@ -163,15 +163,17 @@ export default class ExperimentDemoScene extends THREE.Scene {
         );
 
         console.time(`AABB Creation Time for ${repetitions} repetitions`);
+        const aabb = new THREE.Box3();
         for (let i = 0; i < repetitions; i++) {
-            const aabb = new THREE.Box3();
+            aabb.makeEmpty();
             aabb.expandByObject(this.subject, false);
         }
         console.timeEnd(`AABB Creation Time for ${repetitions} repetitions`);
 
         console.time(`14-DOP Creation Time for ${repetitions} repetitions`);
+        const dop = new DOP(14);
         for (let i = 0; i < repetitions; i++) {
-            const dop = new DOP(14);
+            dop.makeEmpty();
             dop.expandByObject(this.subject, false);
         }
         console.timeEnd(`14-DOP Creation Time for ${repetitions} repetitions`);
