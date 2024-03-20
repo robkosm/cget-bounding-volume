@@ -2,15 +2,16 @@ import path from "path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 
+const exampleNames = ["chess", "playground", "rapier", "sponza"];
+
 export default {
     mode: "development",
-    entry: {
-        "examples/chess": "./src/examples/pages/chess/chessMain.ts",
-        "examples/playground":
-            "./src/examples/pages/playground/playgroundMain.ts",
-        "examples/rapier": "./src/examples/pages/rapier/rapierMain.ts",
-        "examples/sponza": "./src/examples/pages/sponza/sponzaMain.ts",
-    },
+    entry: Object.fromEntries(
+        exampleNames.map((name) => [
+            `examples/${name}`,
+            `./src/examples/pages/${name}/${name}Main.ts`,
+        ])
+    ),
     output: {
         filename: "[name].js",
         path: path.resolve(new URL(".", import.meta.url).pathname, "dist"),
@@ -29,26 +30,14 @@ export default {
         ],
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            filename: "examples/chess.html",
-            template: "./src/examples/pages/chess/index.html",
-            chunks: ["examples/chess"],
-        }),
-        new HtmlWebpackPlugin({
-            filename: "examples/playground.html",
-            template: "./src/examples/pages/playground/index.html",
-            chunks: ["examples/playground"],
-        }),
-        new HtmlWebpackPlugin({
-            filename: "examples/rapier.html",
-            template: "./src/examples/pages/rapier/index.html",
-            chunks: ["examples/rapier"],
-        }),
-        new HtmlWebpackPlugin({
-            filename: "examples/sponza.html",
-            template: "./src/examples/pages/sponza/index.html",
-            chunks: ["examples/sponza"],
-        }),
+        ...exampleNames.map(
+            (name) =>
+                new HtmlWebpackPlugin({
+                    filename: `examples/kdop_${name}.html`,
+                    template: `./src/examples/pages/${name}/index.html`,
+                    chunks: [`examples/${name}`],
+                })
+        ),
         new HtmlWebpackPlugin({
             filename: "examples/index.html",
             template: "./src/examples/index.html",
