@@ -16,6 +16,7 @@ const renderer = new THREE.WebGLRenderer();
 // renderer.shadowMap.enabled = true;
 // document.body.appendChild(renderer.domElement);
 renderer.setAnimationLoop(animate);
+document.body.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 // orbitControls.enableDamping = true
@@ -88,12 +89,3 @@ function resize() {
 window.addEventListener("resize", resize);
 
 resize();
-
-export function mount(container: Node) {
-    if (container) {
-        container.insertBefore(renderer.domElement, container.firstChild);
-        resize();
-    } else {
-        renderer.domElement.remove();
-    }
-}
