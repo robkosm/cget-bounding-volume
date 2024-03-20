@@ -62,8 +62,12 @@ export default {
                     to: "examples/screenshots",
                 },
                 {
-                    from: "src/examples/files/main.css",
-                    to: "files/main.css",
+                    from: "src/examples/files",
+                    to: "examples/files",
+                },
+                {
+                    from: "src/files",
+                    to: "files",
                 },
                 { from: "src/examples/files.json", to: "examples/files.json" },
                 { from: "src/examples/tags.json", to: "examples/tags.json" },
