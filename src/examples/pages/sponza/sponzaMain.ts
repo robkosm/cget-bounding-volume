@@ -1,4 +1,3 @@
-// import './style.css'
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import SponzaDemoScene from "./SponzaDemoScene";
@@ -11,13 +10,10 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 const renderer = new THREE.WebGLRenderer();
-// renderer.setSize(window.innerWidth, window.innerHeight);
-// document.body.appendChild(renderer.domElement);
 renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
-// orbitControls.enableDamping = true
 orbitControls.maxDistance = 20;
 orbitControls.zoomToCursor = true;
 
@@ -37,7 +33,6 @@ function sceneLoaded() {
 function animate() {
     orbitControls.update();
     scene.update();
-    // requestAnimationFrame(animate);
     renderer.render(scene, camera);
 }
 

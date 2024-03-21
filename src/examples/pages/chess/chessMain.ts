@@ -15,7 +15,6 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
-// orbitControls.enableDamping = true
 orbitControls.maxDistance = 20;
 orbitControls.zoomToCursor = true;
 
@@ -23,8 +22,8 @@ const scene = new ChessDemoScene();
 scene.initialize(sceneLoaded);
 
 camera.position.z = 0;
-camera.position.y = .3;
-camera.position.x = .6
+camera.position.y = 0.3;
+camera.position.x = 0.6;
 
 orbitControls.update();
 
