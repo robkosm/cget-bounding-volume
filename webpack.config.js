@@ -1,20 +1,20 @@
-import path from "path";
-import HtmlWebpackPlugin from "html-webpack-plugin";
-import CopyWebpackPlugin from "copy-webpack-plugin";
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const exampleNames = ["chess", "playground", "rapier", "sponza"];
 
-export default {
+module.exports = {
     mode: "development",
-    entry: Object.fromEntries(
-        exampleNames.map((name) => [
-            `examples/${name}`,
-            `./src/examples/pages/${name}/${name}Main.ts`,
-        ])
-    ),
+    entry: exampleNames.reduce((entries, name) => {
+        entries[
+            `examples/${name}`
+        ] = `./src/examples/pages/${name}/${name}Main.ts`;
+        return entries;
+    }, {}),
     output: {
         filename: "[name].js",
-        path: path.resolve(new URL(".", import.meta.url).pathname, "dist"),
+        path: path.resolve(__dirname, "dist"),
         clean: true,
     },
     resolve: {
