@@ -151,7 +151,8 @@ export default class RapierScene extends THREE.Scene {
 
     world;
     gravity;
-    bodies;
+    // eslint-disable-next-line
+    bodies: any[];
 
     k: number;
 
@@ -231,21 +232,19 @@ export default class RapierScene extends THREE.Scene {
     }
 
     addDemoObjectToPhysics(demoObject: DOPdemoObject) {
-        const indices: Uint32Array[] = [];
-        for (
-            let i = 0;
-            i <
-            demoObject.object.children[0].geometry.getAttribute("position")
-                .array.length /
-                3;
-            i++
-        ) {
-            indices.push(i);
+        const indices: Uint32Array = new Uint32Array(
+            (demoObject.object.children[0] as THREE.Mesh).geometry.getAttribute(
+                "position"
+            ).array.length / 3
+        );
+        for (let i = 0; i < indices.length; i++) {
+            indices[i] = i;
         }
 
-        const cp = new RAPIER.ConvexPolyhedron(
-            demoObject.mesh.geometry.getAttribute("position").array
-        );
+        // const cp = new RAPIER.ConvexPolyhedron(
+        //     demoObject.mesh.geometry.getAttribute("position")
+        //         .array as Float32Array
+        // );
 
         // const tm = new RAPIER.TriMesh(
         //     demoObject.object.children[0].geometry.getAttribute(
@@ -269,11 +268,6 @@ export default class RapierScene extends THREE.Scene {
             ),
             true
         );
-
-        // Create a cuboid collider attached to the dynamic rigidBody.
-        // const colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
-        const colliderDesc = new RAPIER.ColliderDesc(cp);
-        const collider = this.world.createCollider(colliderDesc, rigidBody);
 
         this.bodies.push(rigidBody);
     }

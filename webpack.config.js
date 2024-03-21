@@ -20,12 +20,19 @@ export default {
     resolve: {
         extensions: [".ts", ".js"],
     },
+    experiments: {
+        asyncWebAssembly: true,
+    },
     module: {
         rules: [
             {
                 test: /\.ts$/,
                 use: "ts-loader",
                 exclude: /node_modules/,
+            },
+            {
+                test: /\.wasm$/,
+                type: "webassembly/async", // Set module type for WebAssembly files
             },
         ],
     },
