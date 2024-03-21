@@ -121,7 +121,7 @@ export default class ChessDemoScene extends THREE.Scene {
                 },
                 "add"
             )
-            .name("hide all ");
+            .name("hide all");
     }
 
     initializeLights() {

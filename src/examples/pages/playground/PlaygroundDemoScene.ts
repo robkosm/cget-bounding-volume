@@ -83,6 +83,7 @@ class DOPdemoObject {
 
     addToGUI(_gui: GUI) {
         const DOPFolder = _gui.addFolder(this.name);
+        DOPFolder.open();
         DOPFolder.add(this, "k", [6, 8, 12, 14, 18, 20, 26]).onChange(() => {
             this.changeK(Number(this.k));
         });
@@ -108,7 +109,7 @@ export default class DemoScene extends THREE.Scene {
     constructor() {
         super();
         this.k = 26;
-        this.gui = new GUI({ closed: true });
+        this.gui = new GUI();
 
         this.containsPointTester = new THREE.Object3D();
         this.intersectsBoxTester = new THREE.Object3D();
@@ -175,16 +176,21 @@ export default class DemoScene extends THREE.Scene {
             this.add(gridHelper);
         }
 
+        this.initializeGUI();
+
         this.initializeDemoObjects();
 
-        this.initializeLights();
+        this.initializeTesters();
 
-        this.initializeGUI();
+        this.initializeLights();
 
         callback();
     }
 
     initializeDemoObjects() {
+        const demoObjectFolder = this.gui.addFolder("demo objects");
+        demoObjectFolder.open();
+
         {
             const translation = new THREE.Vector3(-4, 0, 0);
             const scale = new THREE.Vector3(0.8, 0.8, 0.8);
@@ -207,7 +213,7 @@ export default class DemoScene extends THREE.Scene {
                     this.demoObjects.push(teapot);
                     this.add(teapot.object);
                     this.add(teapot.DOPhelper);
-                    teapot.addToGUI(this.gui);
+                    teapot.addToGUI(demoObjectFolder);
                 }
             );
         }
@@ -234,7 +240,7 @@ export default class DemoScene extends THREE.Scene {
                     this.demoObjects.push(bunny);
                     this.add(bunny.object);
                     this.add(bunny.DOPhelper);
-                    bunny.addToGUI(this.gui);
+                    bunny.addToGUI(demoObjectFolder);
                 }
             );
         }
@@ -261,10 +267,14 @@ export default class DemoScene extends THREE.Scene {
                     this.demoObjects.push(nefertiti);
                     this.add(nefertiti.object);
                     this.add(nefertiti.DOPhelper);
-                    nefertiti.addToGUI(this.gui);
+                    nefertiti.addToGUI(demoObjectFolder);
                 }
             );
         }
+    }
+
+    initializeTesters() {
+        const testerFolder = this.gui.addFolder("intersection testers");
 
         {
             const geometry = new THREE.SphereGeometry(0.1, 32, 16);
@@ -277,6 +287,10 @@ export default class DemoScene extends THREE.Scene {
             this.containsPointTester.translateX(-4);
             this.containsPointTester.translateZ(4);
             this.add(this.containsPointTester);
+
+            const folder = testerFolder.addFolder("contains point tester");
+            folder.open();
+            folder.add(this.containsPointTester, "visible").name("show/hide");
         }
 
         {
@@ -291,6 +305,12 @@ export default class DemoScene extends THREE.Scene {
             this.intersectsSphereTester.translateY(0.5);
             this.intersectsSphereTester.translateZ(4);
             this.add(this.intersectsSphereTester);
+
+            const folder = testerFolder.addFolder("intersects sphere tester");
+            folder.open();
+            folder
+                .add(this.intersectsSphereTester, "visible")
+                .name("show/hide");
         }
 
         {
@@ -305,6 +325,12 @@ export default class DemoScene extends THREE.Scene {
             this.intersectsBoxTester.translateY(0.5);
             this.intersectsBoxTester.translateZ(4);
             this.add(this.intersectsBoxTester);
+
+            const folder = testerFolder.addFolder("intersects box tester");
+            folder.open();
+            folder
+                .add(this.intersectsSphereTester, "visible")
+                .name("show/hide");
         }
 
         {
@@ -325,6 +351,16 @@ export default class DemoScene extends THREE.Scene {
             this.intersectsRayTesterEnd.translateY(0.5);
             this.intersectsRayTesterEnd.translateZ(4.5);
             this.add(this.intersectsRayTesterEnd);
+
+            const folder = testerFolder.addFolder("intersects ray tester");
+            folder.open();
+            folder
+                .add(this.intersectsRayTesterStart, "visible")
+                .name("show/hide");
+
+            folder
+                .add(this.intersectsRayTesterEnd, "visible")
+                .name("show/hide");
         }
     }
 
