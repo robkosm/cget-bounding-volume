@@ -11,7 +11,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
@@ -34,6 +34,23 @@ function sceneLoaded() {
 function animate() {
     orbitControls.update();
     scene.update();
-    requestAnimationFrame(animate);
     renderer.render(scene, camera);
 }
+
+function resize() {
+    const container = renderer.domElement.parentNode;
+
+    if (container) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        renderer.setSize(width, height);
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
+}
+
+window.addEventListener("resize", resize);
+
+resize();
