@@ -1,0 +1,31 @@
+name: Build and Deploy
+
+on:
+    push:
+        branches:
+            - main # Trigger the workflow on push to main branch, adjust this as needed
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "14" # Choose the Node.js version you need
+
+            - name: Install Dependencies
+              run: npm install # Install dependencies required for your project
+
+            - name: Build Project
+              run: npm run build # Run webpack build command
+
+            - name: Deploy to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./dist # Adjust this path to the directory where your built files are located
