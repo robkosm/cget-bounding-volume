@@ -154,6 +154,8 @@ export default class RapierScene extends THREE.Scene {
     // eslint-disable-next-line
     bodies: any[];
 
+    monkeyInstance: DOPdemoObject | null;
+
     k: number;
 
     constructor() {
@@ -164,6 +166,7 @@ export default class RapierScene extends THREE.Scene {
 
         this.gravity = { x: 0.0, y: -9.81, z: 0.0 };
         this.world = new RAPIER.World(this.gravity);
+        this.monkeyInstance = null;
     }
 
     async initialize(callback: () => void) {
@@ -241,10 +244,10 @@ export default class RapierScene extends THREE.Scene {
             indices[i] = i;
         }
 
-        // const cp = new RAPIER.ConvexPolyhedron(
-        //     demoObject.mesh.geometry.getAttribute("position")
-        //         .array as Float32Array
-        // );
+        const DOPConvexPolyhedron = new RAPIER.ConvexPolyhedron(
+            demoObject.mesh.geometry.getAttribute("position")
+                .array as Float32Array
+        );
 
         // const tm = new RAPIER.TriMesh(
         //     demoObject.object.children[0].geometry.getAttribute(
@@ -269,8 +272,45 @@ export default class RapierScene extends THREE.Scene {
             true
         );
 
+        const colliderDesc = new RAPIER.ColliderDesc(DOPConvexPolyhedron);
+        this.world.createCollider(colliderDesc, rigidBody);
+
         this.bodies.push(rigidBody);
     }
+
+    // async instantiateMonkeys() {
+    //     const translation = new THREE.Vector3(0, 0, 0); // cannot be negative, because face orientation breaks?
+    //     const scale = new THREE.Vector3(1, 1, 1);
+    //     const rotation = new THREE.Quaternion().setFromEuler(
+    //         new THREE.Euler(0, 0, 0, "XYZ")
+    //     );
+
+    //     const transform = new THREE.Matrix4().compose(
+    //         translation,
+    //         rotation,
+    //         scale
+    //     );
+
+    //     const monkey = await DOPdemoObject.initialize(
+    //         "monkey",
+    //         "assets/monkey.obj",
+    //         this.objLoader,
+    //         transform
+    //     );
+
+    //     monkeys = new THREE.InstancedMesh( monkey., material, 400 );
+    //     monkeys.instanceMatrix.setUsage( THREE.DynamicDrawUsage ); // will be updated every frame
+    //     monkeys.userData.physics = { mass: 1 };
+    //     this.add( monkeys );
+
+    //     for ( let i = 0; i < monkeys.count; i ++ ) {
+
+    //         matrix.setPosition( Math.random() - 0.5, Math.random() * 2, Math.random() - 0.5 );
+    //         monkeys.setMatrixAt( i, matrix );
+    //         monkeys.setColorAt( i, color.setHex( 0xffffff * Math.random() ) );
+
+    //     }
+    // }
 
     async getMonkey() {
         const translation = new THREE.Vector3(0, 0, 0); // cannot be negative, because face orientation breaks?
