@@ -15,8 +15,9 @@ renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
-orbitControls.maxDistance = 20;
+orbitControls.maxDistance = 2;
 orbitControls.zoomToCursor = true;
+orbitControls.maxPolarAngle = Math.PI / 2 - 0.1;
 
 const scene = new ChessDemoScene();
 scene.initialize(sceneLoaded);
