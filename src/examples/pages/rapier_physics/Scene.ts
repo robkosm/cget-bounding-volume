@@ -9,7 +9,7 @@ import { GUI } from "dat.gui";
 const RAPIER = await import("@dimforge/rapier3d");
 
 import DOPHelper from "../../../DOPHelper";
-import DOP from "../../../DOP14";
+import DOP from "../../../DOP";
 
 class DOPdemoObject {
     name: string;

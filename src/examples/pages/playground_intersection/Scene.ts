@@ -5,7 +5,7 @@ import { OBJLoader } from "three/examples/jsm/Addons.js";
 import { GUI } from "dat.gui";
 
 import DOPHelper from "../../../DOPHelper";
-import DOP from "../../../DOP14";
+import DOP from "../../../DOP";
 
 class DOPdemoObject {
     name: string;

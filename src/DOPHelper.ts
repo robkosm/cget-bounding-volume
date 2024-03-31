@@ -1,61 +1,72 @@
 import * as THREE from "three";
-import DOP from "./DOP14";
+import DOP from "./DOP";
 
 export default class DOPHelper extends THREE.LineSegments {
-    dop: DOP
-    color: THREE.Color
-    type: string
+    dop: DOP;
+    color: THREE.Color;
+    type: string;
 
     constructor(_dop: DOP, _color: THREE.Color = new THREE.Color(0xffff00)) {
         const geometry = new THREE.BufferGeometry();
-        super( geometry, new THREE.LineBasicMaterial( { color: _color, toneMapped: false } ) );
+        super(
+            geometry,
+            new THREE.LineBasicMaterial({ color: _color, toneMapped: false })
+        );
 
         this.dop = _dop;
         this.color = _color;
 
-        const lineSegments = this.edges()
+        const lineSegments = this.edges();
 
         // const tempIndices = []
-        const indices = new Uint16Array(2 * lineSegments.length)
-        const positions = []
-        let indexCounter = 0
+        const indices = new Uint16Array(2 * lineSegments.length);
+        const positions = [];
+        let indexCounter = 0;
 
         for (const segment of lineSegments) {
-            positions.push(segment[0].x, segment[0].y, segment[0].z, segment[1].x, segment[1].y, segment[1].z)
-            indices[indexCounter] = indexCounter
-            indices[indexCounter + 1] = indexCounter + 1
-            indexCounter += 2
+            positions.push(
+                segment[0].x,
+                segment[0].y,
+                segment[0].z,
+                segment[1].x,
+                segment[1].y,
+                segment[1].z
+            );
+            indices[indexCounter] = indexCounter;
+            indices[indexCounter + 1] = indexCounter + 1;
+            indexCounter += 2;
         }
 
-		geometry.setIndex( new THREE.BufferAttribute( indices, 1 ) );
-		geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ) );
+        geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+        geometry.setAttribute(
+            "position",
+            new THREE.Float32BufferAttribute(positions, 3)
+        );
 
-		this.type = 'DOPHelper';
+        this.type = "DOPHelper";
 
-		this.geometry.computeBoundingSphere();
+        this.geometry.computeBoundingSphere();
     }
 
     // updateMatrixWorld( force ) {
 
-	// 	const dop = this.dop;
+    // 	const dop = this.dop;
 
-	// 	if ( dop.isEmpty() ) return;
+    // 	if ( dop.isEmpty() ) return;
 
-	// 	dop.getCenter( this.position );
+    // 	dop.getCenter( this.position );
 
-	// 	dop.getSize( this.scale );
+    // 	dop.getSize( this.scale );
 
-	// 	this.scale.multiplyScalar( 0.5 );
+    // 	this.scale.multiplyScalar( 0.5 );
 
-	// 	super.updateMatrixWorld( force );
+    // 	super.updateMatrixWorld( force );
 
-	// }
+    // }
 
-	dispose() {
-
-		this.geometry.dispose();
-	
-	}
+    dispose() {
+        this.geometry.dispose();
+    }
 
     private edges() {
         function getIntersectionLine(
@@ -262,6 +273,6 @@ export default class DOPHelper extends THREE.LineSegments {
             }
         }
 
-        return lineSegments
+        return lineSegments;
     }
 }
