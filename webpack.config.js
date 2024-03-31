@@ -37,6 +37,17 @@ module.exports = {
                 test: /\.wasm$/,
                 type: "webassembly/async", // Set module type for WebAssembly files
             },
+            {
+                test: /\.md$/,
+                use: [
+                    {
+                        loader: "html-loader",
+                    },
+                    {
+                        loader: "markdown-loader",
+                    },
+                ],
+            },
         ],
     },
     plugins: [
@@ -48,6 +59,11 @@ module.exports = {
                     chunks: [`examples/${name}`],
                 })
         ),
+        new HtmlWebpackPlugin({
+            filename: "index.html", // Generate index.html at the root based on base Markdown file
+            template: "./src/about.md",
+            chunks: [],
+        }),
         new HtmlWebpackPlugin({
             filename: "examples/index.html",
             template: "./src/examples/index.html",
