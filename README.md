@@ -4,6 +4,8 @@
 
 `git clone https://github.com/robkosm/three-kdop`
 
+`cd three-kdop`
+
 `npm i`
 
 `npm run build`
