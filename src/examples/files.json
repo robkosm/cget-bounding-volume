@@ -1,8 +1,8 @@
 {
 	"kdop": [
-		"kdop_chess",
-		"kdop_playground",
-		"kdop_rapier",
-		"kdop_sponza"
+		"kdop_chess_gltf",
+		"kdop_playground_intersection",
+		"kdop_rapier_physics",
+		"kdop_sponza_gltf"
     ]
 }

@@ -2,14 +2,17 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-const exampleNames = ["chess", "playground", "rapier", "sponza"];
+const exampleNames = [
+    "chess_gltf",
+    "playground_intersection",
+    "rapier_physics",
+    "sponza_gltf",
+];
 
 module.exports = {
     mode: "development",
     entry: exampleNames.reduce((entries, name) => {
-        entries[
-            `examples/${name}`
-        ] = `./src/examples/pages/${name}/${name}Main.ts`;
+        entries[`examples/${name}`] = `./src/examples/pages/${name}/main.ts`;
         return entries;
     }, {}),
     output: {

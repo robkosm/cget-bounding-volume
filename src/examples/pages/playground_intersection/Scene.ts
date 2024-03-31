@@ -28,9 +28,7 @@ class DOPdemoObject {
         this.DOPhelper = new DOPHelper(this.DOP);
 
         _objLoader.load(
-            // resource URL
             _url,
-            // called when resource is loaded
             (object: THREE.Object3D) => {
                 this.object = object;
 
@@ -38,8 +36,6 @@ class DOPdemoObject {
                     if (mesh instanceof THREE.Mesh) {
                         mesh.material = new THREE.MeshStandardMaterial({
                             color: 0xefd4ca,
-                            // color: 0xffa996,
-                            // color: (Math.random() * 0xFFFFFF << 0),
                             roughness: 0.1,
                         });
                         mesh.castShadow = true;
@@ -55,13 +51,11 @@ class DOPdemoObject {
                 );
                 _callback(this);
             },
-            // called when loading is in progresses
             function (xhr) {
                 console.log(
                     _name + " " + (xhr.loaded / xhr.total) * 100 + "% loaded"
                 );
             },
-            // called when loading has errors
             function (error) {
                 console.log(error);
             }
@@ -75,7 +69,6 @@ class DOPdemoObject {
 
         const newDOPhelper = new DOPHelper(this.DOP, new THREE.Color(0xff00ff));
 
-        // replace line rendered mesh
         this.DOPhelper.add(newDOPhelper);
         this.DOPhelper.parent?.attach(newDOPhelper);
         this.DOPhelper.parent?.remove(this.DOPhelper);
@@ -120,8 +113,6 @@ export default class DemoScene extends THREE.Scene {
     }
 
     async initialize(callback: () => void) {
-        // this.background = new THREE.Color(0xf1f1f1);
-        // this.background = new THREE.Color(0x10101a);
         this.background = new THREE.Color(0xa0a0a0);
         this.fog = new THREE.Fog(0xa0a0a0, 10, 50);
 
@@ -137,24 +128,6 @@ export default class DemoScene extends THREE.Scene {
             plane.receiveShadow = true;
             this.add(plane);
         }
-
-        // {
-        //     const geometry = new THREE.PlaneGeometry( 100, 100 );
-        //     const material = new THREE.MeshStandardMaterial( {color: 0xffffff, side: THREE.DoubleSide, roughness: .6} );
-        //     const plane = new THREE.Mesh( geometry, material );
-        //     plane.translateZ(-5)
-        //     this.add( plane );
-        // }
-
-        // {
-        //     const geometry = new THREE.PlaneGeometry( 100,5 );
-        //     const material = new THREE.MeshStandardMaterial( {color: 0xffffff, side: THREE.DoubleSide, roughness: .6} );
-        //     const plane = new THREE.Mesh( geometry, material );
-        //     plane.translateZ(-4)
-        //     plane.rotateX(-Math.PI/16)
-
-        //     this.add( plane );
-        // }
 
         {
             const gridHelper = new THREE.GridHelper(
@@ -365,13 +338,7 @@ export default class DemoScene extends THREE.Scene {
         }
     }
 
-    initializeGUI() {
-        // // TODO: toggle transform controls
-        // const shapeFolder = this.gui.addFolder("intersection test shapes");
-        // shapeFolder.add(this.containsPointTester, "visible").name("Show containsPointTester");
-        // shapeFolder.add(this.intersectsSphereTester, "visible").name("Show intersectsSphereTester");
-        // shapeFolder.add(this.intersectsBoxTester, "visible").name("Show intersectsBoxTester");
-    }
+    initializeGUI() {}
 
     initializeLights() {
         {
@@ -400,19 +367,11 @@ export default class DemoScene extends THREE.Scene {
                 obj.DOP.containsPoint(this.containsPointTester.position)
             )
         ) {
-            // (
-            //     (this.containsPointTester as THREE.Mesh)
-            //         .material as THREE.MeshStandardMaterial
-            // ).color.setHex(0xff00ff);
             (
                 (this.containsPointTester as THREE.Mesh)
                     .material as THREE.MeshStandardMaterial
             ).emissive.setHex(0xff00ff);
         } else {
-            // (
-            //     (this.containsPointTester as THREE.Mesh)
-            //         .material as THREE.MeshStandardMaterial
-            // ).color.setHex(0x00ffff);
             (
                 (this.containsPointTester as THREE.Mesh)
                     .material as THREE.MeshStandardMaterial
@@ -432,47 +391,29 @@ export default class DemoScene extends THREE.Scene {
                 )
             )
         ) {
-            // (
-            //     (this.containsPointTester as THREE.Mesh)
-            //         .material as THREE.MeshStandardMaterial
-            // ).color.setHex(0xff00ff);
             (
                 (this.intersectsSphereTester as THREE.Mesh)
                     .material as THREE.MeshStandardMaterial
             ).emissive.setHex(0xff00ff);
         } else {
-            // (
-            //     (this.containsPointTester as THREE.Mesh)
-            //         .material as THREE.MeshStandardMaterial
-            // ).color.setHex(0x00ffff);
             (
                 (this.intersectsSphereTester as THREE.Mesh)
                     .material as THREE.MeshStandardMaterial
             ).emissive.setHex(0x00ffff);
         }
 
-        // this.intersectsBoxTester.geometry.computeBoundingBox()
         if (
             this.demoObjects.some((obj) =>
-                // obj.DOP.intersectsBox(this.intersectsBoxTester.geometry.boundingBox)
                 obj.DOP.intersectsBox(
                     new THREE.Box3().setFromObject(this.intersectsBoxTester)
                 )
             )
         ) {
-            // (
-            //     (this.containsPointTester as THREE.Mesh)
-            //         .material as THREE.MeshStandardMaterial
-            // ).color.setHex(0xff00ff);
             (
                 (this.intersectsBoxTester as THREE.Mesh)
                     .material as THREE.MeshStandardMaterial
             ).emissive.setHex(0xff00ff);
         } else {
-            // (
-            //     (this.containsPointTester as THREE.Mesh)
-            //         .material as THREE.MeshStandardMaterial
-            // ).color.setHex(0x00ffff);
             (
                 (this.intersectsBoxTester as THREE.Mesh)
                     .material as THREE.MeshStandardMaterial
@@ -481,7 +422,6 @@ export default class DemoScene extends THREE.Scene {
 
         if (
             this.demoObjects.some((obj) =>
-                // obj.DOP.intersectsBox(this.intersectsBoxTester.geometry.boundingBox)
                 obj.DOP.intersectsRay(
                     new THREE.Ray(
                         this.intersectsRayTesterStart.position,

@@ -41,7 +41,6 @@ class DOPdemoObject {
             if (mesh instanceof THREE.Mesh) {
                 mesh.material = new THREE.MeshStandardMaterial({
                     color: 0xefd4ca,
-                    // color: (Math.random() * 0xFFFFFF << 0),
                     roughness: 0.1,
                 });
             }
@@ -68,9 +67,6 @@ class DOPdemoObject {
                 new THREE.WireframeGeometry(geometry),
                 new THREE.LineBasicMaterial({ color: 0xff00ff })
             );
-
-            // this.object.attach(this.mesh);
-            // this.object.attach(this.meshSegments);
         }
     }
 
@@ -80,18 +76,11 @@ class DOPdemoObject {
         _objLoader: OBJLoader,
         _transform: THREE.Matrix4
     ) {
-        const object = await _objLoader.loadAsync(
-            // resource URL
-            _url,
-            // called when resource is loaded
-
-            // called when loading is in progresses
-            function (xhr) {
-                console.log(
-                    _name + " " + (xhr.loaded / xhr.total) * 100 + "% loaded"
-                );
-            }
-        );
+        const object = await _objLoader.loadAsync(_url, function (xhr) {
+            console.log(
+                _name + " " + (xhr.loaded / xhr.total) * 100 + "% loaded"
+            );
+        });
 
         return new DOPdemoObject(_name, _url, _objLoader, _transform, object);
     }
@@ -108,30 +97,6 @@ class DOPdemoObject {
         this.DOPhelper.parent?.attach(newDOPhelper);
         this.DOPhelper.parent?.remove(this.DOPhelper);
         this.DOPhelper = newDOPhelper;
-
-        {
-            // const geometry = this.DOP.getGeometry();
-            // const newMesh = new THREE.Mesh(
-            //     geometry,
-            //     new THREE.MeshBasicMaterial({
-            //         color: 0xffffff,
-            //         transparent: true,
-            //         opacity: 0.2,
-            //     })
-            // );
-            // this.mesh.add(newMesh);
-            // this.mesh.parent?.attach(newMesh);
-            // this.mesh.parent?.remove(this.mesh);
-            // this.mesh = newMesh;
-            // const newMeshSegments = new THREE.LineSegments(
-            //     new THREE.WireframeGeometry(geometry),
-            //     new THREE.LineBasicMaterial({ color: 0xffffff })
-            // );
-            // this.meshSegments.add(newMeshSegments);
-            // this.meshSegments.parent?.attach(newMeshSegments);
-            // this.meshSegments.parent?.remove(this.meshSegments);
-            // this.meshSegments = newMeshSegments;
-        }
     }
 
     addToGUI(_gui: GUI) {
@@ -173,10 +138,9 @@ export default class RapierScene extends THREE.Scene {
     async initialize(callback: () => void) {
         this.initializeWorld();
 
-        this.initializeCannon();
+        this.initializePhysics();
 
         await this.addOneMonkey();
-        // await this.addOneMonkey();
 
         this.initializeLights();
 
@@ -186,7 +150,6 @@ export default class RapierScene extends THREE.Scene {
     }
 
     initializeWorld() {
-        // this.background = new THREE.Color(0xf1f1f1);
         this.background = new THREE.Color(0xa0a0a0);
         this.fog = new THREE.Fog(0xa0a0a0, 10, 50);
 
@@ -225,8 +188,7 @@ export default class RapierScene extends THREE.Scene {
         }
     }
 
-    initializeCannon() {
-        // Create the ground
+    initializePhysics() {
         const groundColliderDesc = RAPIER.ColliderDesc.cuboid(
             100.0,
             0.1,
@@ -257,7 +219,6 @@ export default class RapierScene extends THREE.Scene {
         //     indices
         // );
 
-        // Create a dynamic rigid-body.
         const rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic();
         rigidBodyDesc.setTranslation(0.0, 10.0, 0.0);
         // rigidBodyDesc.angularDamping = 0.1;
@@ -278,40 +239,6 @@ export default class RapierScene extends THREE.Scene {
 
         this.bodies.push(rigidBody);
     }
-
-    // async instantiateMonkeys() {
-    //     const translation = new THREE.Vector3(0, 0, 0); // cannot be negative, because face orientation breaks?
-    //     const scale = new THREE.Vector3(1, 1, 1);
-    //     const rotation = new THREE.Quaternion().setFromEuler(
-    //         new THREE.Euler(0, 0, 0, "XYZ")
-    //     );
-
-    //     const transform = new THREE.Matrix4().compose(
-    //         translation,
-    //         rotation,
-    //         scale
-    //     );
-
-    //     const monkey = await DOPdemoObject.initialize(
-    //         "monkey",
-    //         "assets/monkey.obj",
-    //         this.objLoader,
-    //         transform
-    //     );
-
-    //     monkeys = new THREE.InstancedMesh( monkey., material, 400 );
-    //     monkeys.instanceMatrix.setUsage( THREE.DynamicDrawUsage ); // will be updated every frame
-    //     monkeys.userData.physics = { mass: 1 };
-    //     this.add( monkeys );
-
-    //     for ( let i = 0; i < monkeys.count; i ++ ) {
-
-    //         matrix.setPosition( Math.random() - 0.5, Math.random() * 2, Math.random() - 0.5 );
-    //         monkeys.setMatrixAt( i, matrix );
-    //         monkeys.setColorAt( i, color.setHex( 0xffffff * Math.random() ) );
-
-    //     }
-    // }
 
     async getMonkey() {
         const translation = new THREE.Vector3(0, 0, 0); // cannot be negative, because face orientation breaks?
@@ -342,10 +269,6 @@ export default class RapierScene extends THREE.Scene {
         this.demoObjects.push(monkey);
         this.add(monkey.object);
         this.addDemoObjectToPhysics(monkey);
-        // this.add(monkey.DOPhelper);
-        // this.add(monkey.mesh);
-        // this.add(monkey.meshSegments);
-        // monkey.addToGUI(this.gui);
     }
 
     initializeGUI() {}
@@ -369,23 +292,6 @@ export default class RapierScene extends THREE.Scene {
             dirLight.shadow.camera.far = 40;
             this.add(dirLight);
         }
-
-        // {
-        //     const light = new THREE.AmbientLight(0x888888); // soft white light
-        //     this.add(light);
-        // }
-
-        // {
-        //     const light = new THREE.DirectionalLight(0xffffee, 1);
-        //     light.position.set(0, 4, 2);
-        //     this.add(light);
-        // }
-
-        // {
-        //     const light = new THREE.DirectionalLight(0x0000ff, 0.1);
-        //     light.position.set(0, -4, -2);
-        //     this.add(light);
-        // }
     }
 
     async update(_frameCount: number) {
