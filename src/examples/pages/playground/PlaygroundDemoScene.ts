@@ -19,7 +19,7 @@ class DOPdemoObject {
         _url: string,
         _objLoader: OBJLoader,
         _transform: THREE.Matrix4,
-        _callback: Function
+        _callback: (obj: DOPdemoObject) => void
     ) {
         this.name = _name;
         this.object = new THREE.Object3D();
@@ -68,8 +68,9 @@ class DOPdemoObject {
         );
     }
 
-    changeK(_newK: Number) {
-        this.DOP = new DOP(Number(this.k));
+    changeK(_newK: number) {
+        this.k = _newK;
+        this.DOP = new DOP(Number(_newK));
         this.DOP.setFromObject(this.object);
 
         const newDOPhelper = new DOPHelper(this.DOP, new THREE.Color(0xff00ff));
@@ -118,7 +119,7 @@ export default class DemoScene extends THREE.Scene {
         this.intersectsRayTesterEnd = new THREE.Object3D();
     }
 
-    async initialize(callback: Function) {
+    async initialize(callback: () => void) {
         // this.background = new THREE.Color(0xf1f1f1);
         // this.background = new THREE.Color(0x10101a);
         this.background = new THREE.Color(0xa0a0a0);
@@ -373,35 +374,6 @@ export default class DemoScene extends THREE.Scene {
     }
 
     initializeLights() {
-        // {
-        //     const light = new THREE.AmbientLight(0x888888); // soft white light
-        //     this.add(light);
-        // }
-
-        // {
-        //     const light = new THREE.DirectionalLight(0xffffee, 2);
-        //     light.position.set(0, 4, 1);
-        //     this.add(light);
-        // }
-
-        // {
-        //     const light = new THREE.DirectionalLight(0xffffee, .8);
-        //     light.position.set(2, .5, 1);
-        //     this.add(light);
-        // }
-
-        // {
-        //     const light = new THREE.DirectionalLight(0xffffee, .7);
-        //     light.position.set(-2, .5, 1);
-        //     this.add(light);
-        // }
-
-        // {
-        //     const light = new THREE.DirectionalLight(0xffffee, .8);
-        //     light.position.set(0, 1, 1);
-        //     this.add(light);
-        // }
-
         {
             const hemiLight = new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 2);
             hemiLight.position.set(0, 100, 0);
@@ -420,12 +392,6 @@ export default class DemoScene extends THREE.Scene {
             dirLight.shadow.camera.far = 40;
             this.add(dirLight);
         }
-
-        // {
-        //     const light = new THREE.DirectionalLight(0x0000ff, 0.1);
-        //     light.position.set(0, -4, -2);
-        //     this.add(light);
-        // }
     }
 
     update() {

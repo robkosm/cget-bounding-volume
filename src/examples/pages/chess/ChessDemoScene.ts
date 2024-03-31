@@ -13,16 +13,53 @@ export default class ChessDemoScene extends THREE.Scene {
     gui: GUI;
 
     k: number;
+    DOPHelpers: DOPHelper[];
 
     constructor() {
         super();
         this.k = 26;
         this.gui = new GUI();
+        this.DOPHelpers = [];
     }
 
     async initialize(callback: () => void) {
         // this.background = new THREE.Color(0xf1f1f1);
-        this.background = new THREE.Color(0x10101a);
+        this.background = new THREE.Color(0xa0a0a0);
+        this.fog = new THREE.Fog(0xa0a0a0, 1, 5);
+
+        {
+            const geometry = new THREE.PlaneGeometry(1000, 1000);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                side: THREE.DoubleSide,
+                roughness: 0.6,
+            });
+            const plane = new THREE.Mesh(geometry, material);
+            plane.rotateX(Math.PI / 2);
+            plane.receiveShadow = true;
+            this.add(plane);
+        }
+
+        {
+            const gridHelper = new THREE.GridHelper(
+                1,
+                100,
+                new THREE.Color(0xeeeeee),
+                new THREE.Color(0xeeeeee)
+            );
+            gridHelper.translateY(0.01);
+            this.add(gridHelper);
+        }
+        {
+            const gridHelper = new THREE.GridHelper(
+                1,
+                10,
+                new THREE.Color(0xdddddd),
+                new THREE.Color(0xdddddd)
+            );
+            gridHelper.translateY(0.01);
+            this.add(gridHelper);
+        }
 
         // {
         //     const gridHelper = new THREE.GridHelper(
@@ -45,6 +82,8 @@ export default class ChessDemoScene extends THREE.Scene {
 
         this.initializeGUI();
 
+        const piecesFolder = this.gui.addFolder("pieces");
+
         // Load a glTF resource
         this.gltfLoader.load(
             // resource URL
@@ -58,10 +97,11 @@ export default class ChessDemoScene extends THREE.Scene {
                         dop.setFromObject(o);
                         const dopHelper = new DOPHelper(dop);
                         // const folder = this.gui.addFolder("mesh " + Math.random().toString(36).slice(2, 5));
-                        const folder = this.gui.addFolder(o.userData.name);
+                        const folder = piecesFolder.addFolder(o.userData.name);
                         folder.add(o, "visible").name("mesh visible");
                         folder.add(dopHelper, "visible").name("helper visible");
                         this.add(dopHelper);
+                        this.DOPHelpers.push(dopHelper);
                     } else {
                         const dop = new DOP(26);
                         dop.setFromObject(o);
@@ -78,7 +118,6 @@ export default class ChessDemoScene extends THREE.Scene {
                     }
                 });
 
-                console.log(this);
                 this.add(gltf.scene);
 
                 gltf.animations; // Array<THREE.AnimationClip>
@@ -103,17 +142,12 @@ export default class ChessDemoScene extends THREE.Scene {
     }
 
     initializeGUI() {
-        const folder = this.gui.addFolder("general settings");
-        const self = this;
-        folder
+        this.gui
             .add(
                 {
-                    add: function () {
-                        self.traverse(function (o) {
-                            if (
-                                o instanceof THREE.Mesh ||
-                                o instanceof DOPHelper
-                            ) {
+                    add: () => {
+                        this.traverse(function (o) {
+                            if (o instanceof THREE.Mesh) {
                                 o.visible = false;
                             }
                         });
@@ -121,33 +155,59 @@ export default class ChessDemoScene extends THREE.Scene {
                 },
                 "add"
             )
-            .name("hide all");
+            .name("hide all meshes");
+        this.gui
+            .add(
+                {
+                    add: () => {
+                        this.traverse(function (o) {
+                            if (o instanceof THREE.Mesh) {
+                                o.visible = true;
+                            }
+                        });
+                    },
+                },
+                "add"
+            )
+            .name("show all meshes");
+        this.gui
+            .add(
+                {
+                    add: () => {
+                        for (const dh of this.DOPHelpers) {
+                            dh.visible = false;
+                        }
+                    },
+                },
+                "add"
+            )
+            .name("hide all k-DOP helpers");
+        this.gui
+            .add(
+                {
+                    add: () => {
+                        for (const dh of this.DOPHelpers) {
+                            dh.visible = true;
+                        }
+                    },
+                },
+                "add"
+            )
+            .name("show all k-DOP helpers");
     }
 
     initializeLights() {
         {
-            const light = new THREE.AmbientLight(0x888888); // soft white light
-            // const light = new THREE.AmbientLight(0x444444); // soft white light
-            this.add(light);
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x8d8d8d, 2);
+            hemiLight.position.set(0, 100, 0);
+            this.add(hemiLight);
         }
 
         {
-            const light = new THREE.PointLight(0xffffff, 10);
-            light.position.set(0, 2, 0);
-            this.add(light);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+            dirLight.position.set(0, 20, 20);
+            this.add(dirLight);
         }
-
-        // {
-        //     const light = new THREE.DirectionalLight(0xffffee, 1);
-        //     light.position.set(0, 4, 2);
-        //     this.add(light);
-        // }
-
-        // {
-        //     const light = new THREE.DirectionalLight(0x0000ff, 0.1);
-        //     light.position.set(0, -4, -2);
-        //     this.add(light);
-        // }
     }
 
     update() {}

@@ -97,7 +97,8 @@ class DOPdemoObject {
     }
 
     changeK(_newK: number) {
-        this.DOP = new DOP(Number(this.k));
+        this.k = _newK;
+        this.DOP = new DOP(Number(_newK));
         this.DOP.setFromObject(this.object);
 
         const newDOPhelper = new DOPHelper(this.DOP, new THREE.Color(0xffffff));
@@ -257,17 +258,17 @@ export default class RapierScene extends THREE.Scene {
         // );
 
         // Create a dynamic rigid-body.
-        const rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(
-            0.0,
-            10.0,
-            0.0
-        );
+        const rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic();
+        rigidBodyDesc.setTranslation(0.0, 10.0, 0.0);
+        // rigidBodyDesc.angularDamping = 0.1;
+        rigidBodyDesc.mass = 1;
+
         const rigidBody = this.world.createRigidBody(rigidBodyDesc);
-        rigidBody.addTorque(
+        rigidBody.applyTorqueImpulse(
             new RAPIER.Vector3(
-                Math.random() * 20 - 10,
-                Math.random() * 20 - 10,
-                Math.random() * 20 - 10
+                Math.random() * 200 - 100,
+                Math.random() * 200 - 100,
+                Math.random() * 200 - 100
             ),
             true
         );
