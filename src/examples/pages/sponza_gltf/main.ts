@@ -20,8 +20,8 @@ orbitControls.zoomToCursor = true;
 const scene = new SponzaDemoScene();
 scene.initialize(sceneLoaded);
 
-camera.position.z = 8;
-camera.position.y = -24;
+camera.position.z = -24;
+camera.position.y = 8;
 camera.position.x = 16;
 
 orbitControls.update();

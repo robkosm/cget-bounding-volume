@@ -97,6 +97,7 @@ export default class DemoScene extends THREE.Scene {
     intersectsSphereTester: THREE.Object3D;
     intersectsRayTesterStart: THREE.Object3D;
     intersectsRayTesterEnd: THREE.Object3D;
+    intersectsRayTesterTube: THREE.Object3D;
 
     k: number;
 
@@ -110,6 +111,7 @@ export default class DemoScene extends THREE.Scene {
         this.intersectsSphereTester = new THREE.Object3D();
         this.intersectsRayTesterStart = new THREE.Object3D();
         this.intersectsRayTesterEnd = new THREE.Object3D();
+        this.intersectsRayTesterTube = new THREE.Object3D();
     }
 
     async initialize(callback: () => void) {
@@ -290,7 +292,7 @@ export default class DemoScene extends THREE.Scene {
         {
             const geometry = new THREE.BoxGeometry(2, 1, 1);
             const material = new THREE.MeshStandardMaterial({
-                color: 0x00ffff,
+                color: 0x888888,
                 emissive: 0x00ffff,
                 emissiveIntensity: 0.5,
             });
@@ -310,7 +312,7 @@ export default class DemoScene extends THREE.Scene {
         {
             const geometry = new THREE.SphereGeometry(0.1, 32, 16);
             const material = new THREE.MeshStandardMaterial({
-                color: 0x00ffff,
+                color: 0x888888,
                 emissive: 0x00ffff,
                 emissiveIntensity: 0.5,
             });
@@ -326,15 +328,55 @@ export default class DemoScene extends THREE.Scene {
             this.intersectsRayTesterEnd.translateZ(4.5);
             this.add(this.intersectsRayTesterEnd);
 
+            // const rayPath = new THREE.LineCurve3(
+            //     this.intersectsRayTesterStart.position,
+            //     this.intersectsRayTesterEnd.position
+            // );
+            const rayPath = new THREE.LineCurve3(
+                new THREE.Vector3(),
+                new THREE.Vector3(0, 0, -1)
+            );
+
+            const tubeGeometry = new THREE.TubeGeometry(
+                rayPath,
+                3,
+                0.05,
+                32,
+                true
+            );
+
+            const tubeMesh = new THREE.Mesh(tubeGeometry, material);
+            this.add(tubeMesh);
+
+            this.intersectsRayTesterTube = tubeMesh;
+
             const folder = testerFolder.addFolder("intersects ray tester");
             folder.open();
-            folder
-                .add(this.intersectsRayTesterStart, "visible")
-                .name("show/hide");
+
+            this.intersectsRayTesterStart.visible = false;
+            this.intersectsRayTesterEnd.visible = false;
 
             folder
-                .add(this.intersectsRayTesterEnd, "visible")
-                .name("show/hide");
+                .add(
+                    {
+                        add: () => {
+                            this.intersectsRayTesterTube.visible = true;
+                        },
+                    },
+                    "add"
+                )
+                .name("show");
+
+            folder
+                .add(
+                    {
+                        add: () => {
+                            this.intersectsRayTesterTube.visible = false;
+                        },
+                    },
+                    "add"
+                )
+                .name("hide");
         }
     }
 
@@ -361,7 +403,7 @@ export default class DemoScene extends THREE.Scene {
         }
     }
 
-    update() {
+    testIntersections() {
         if (
             this.demoObjects.some((obj) =>
                 obj.DOP.containsPoint(this.containsPointTester.position)
@@ -433,23 +475,42 @@ export default class DemoScene extends THREE.Scene {
             )
         ) {
             (
-                (this.intersectsRayTesterStart as THREE.Mesh)
-                    .material as THREE.MeshStandardMaterial
-            ).emissive.setHex(0xff00ff);
-            (
-                (this.intersectsRayTesterEnd as THREE.Mesh)
+                (this.intersectsRayTesterTube as THREE.Mesh)
                     .material as THREE.MeshStandardMaterial
             ).emissive.setHex(0xff00ff);
         } else {
             (
-                (this.intersectsRayTesterStart as THREE.Mesh)
-                    .material as THREE.MeshStandardMaterial
-            ).emissive.setHex(0x00ffff);
-            (
-                (this.intersectsRayTesterEnd as THREE.Mesh)
+                (this.intersectsRayTesterTube as THREE.Mesh)
                     .material as THREE.MeshStandardMaterial
             ).emissive.setHex(0x00ffff);
         }
+    }
+
+    update() {
+        this.intersectsRayTesterTube.matrix = new THREE.Matrix4();
+
+        const dir = new THREE.Vector3().subVectors(
+            this.intersectsRayTesterEnd.position,
+            this.intersectsRayTesterStart.position
+        );
+
+        this.intersectsRayTesterTube.scale.set(1, 1, 1.5 * dir.length());
+
+        const mx = new THREE.Matrix4().lookAt(
+            this.intersectsRayTesterStart.position,
+            this.intersectsRayTesterEnd.position,
+            new THREE.Vector3(0, 1, 0)
+        );
+
+        this.intersectsRayTesterTube.setRotationFromMatrix(mx);
+
+        this.intersectsRayTesterTube.position.set(
+            this.intersectsRayTesterStart.position.x,
+            this.intersectsRayTesterStart.position.y,
+            this.intersectsRayTesterStart.position.z
+        );
+
+        this.testIntersections();
     }
 
     getVertices(): THREE.Float32BufferAttribute[] {
