@@ -32,6 +32,8 @@
 
 # k-DOPs in Three.js
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/VJ_SrJQW2DA?si=faeelnkLpVS1kWY_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="margin-top: 48px;"></iframe>
+
 > This Project was part of the [3D Computer Graphics: Extending the Three.js Seminar](https://hpi.de/studium/im-studium/lehrveranstaltungen/it-systems-engineering-ma/lehrveranstaltung/wise-23-24-3847-3d-computer-graphics-extending-the-threejs-framework.html) at Hasso Plattner Institute. Participants of this seminar explored how common computer graphics concepts still missing from the [Three.js](https://threejs.org/) library can be implemented.
 
 <ul>
